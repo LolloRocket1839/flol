@@ -1,12 +1,9 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-
 const HomePage = () => {
-  return (
-    <div className="space-y-12">
+  return <div className="space-y-12">
       <section className="py-16 bg-gradient-to-r from-fintool-blue to-fintool-blue-light text-white rounded-lg mb-12">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -28,7 +25,7 @@ const HomePage = () => {
 
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Le nostre sezioni</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Un po' di educazione finanziaria</h2>
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
@@ -73,8 +70,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default HomePage;
