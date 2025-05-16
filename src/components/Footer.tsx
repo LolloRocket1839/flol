@@ -41,7 +41,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="mt-8 pt-4 border-t border-gray-700 text-center text-gray-300">
-          <p>&copy; {new Date().getFullYear()} FinTool. Tutti i diritti riservati.</p>
+          <p>&copy; {new Date().getFullYear()} <span className="font-bold text-white">F<span className="text-fintool-teal">L</span>o<span className="text-fintool-teal">L</span></span> <span className="text-sm italic">a Lorenzo Oni-Joseph production</span></p>
         </div>
       </div>
     </footer>
