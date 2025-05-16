@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { tools } from '@/data/tools';
 import InterestCalculator from '@/components/tools/InterestCalculator';
 import FireCalculator from '@/components/tools/FireCalculator';
+import FireCalculatorAdvanced from '@/components/tools/FireCalculatorAdvanced';
 
 const ToolPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -30,6 +31,8 @@ const ToolPage = () => {
         return <InterestCalculator />;
       case 'fire-calculator':
         return <FireCalculator />;
+      case 'fire-calculator-advanced':
+        return <FireCalculatorAdvanced />;
       default:
         return (
           <div className="text-center py-8">

@@ -21,5 +21,12 @@ export const tools: Tool[] = [
     description: "Calcola quando potrai raggiungere l'indipendenza finanziaria in base ai tuoi risparmi e spese",
     icon: "🔥",
     category: "Pianificazione"
+  },
+  {
+    slug: "fire-calculator-advanced",
+    title: "Calcolatore FIRE Avanzato",
+    description: "Pianifica il tuo percorso verso l'indipendenza finanziaria con un'analisi dettagliata e interattiva",
+    icon: "⚡",
+    category: "Pianificazione"
   }
 ];
