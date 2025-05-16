@@ -1,14 +1,11 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-
 const Footer = () => {
-  return (
-    <footer className="bg-fintool-blue text-white py-8 mt-12">
+  return <footer className="bg-fintool-blue text-white py-8 mt-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-lg font-bold mb-4">FinTool</h3>
+            <h3 className="text-lg font-bold mb-4">FLoL</h3>
             <p className="text-gray-300">
               Strumenti e articoli per l'educazione finanziaria.
             </p>
@@ -44,8 +41,6 @@ const Footer = () => {
           <p>&copy; {new Date().getFullYear()} <span className="font-bold text-white">F<span className="text-fintool-teal">L</span>o<span className="text-fintool-teal">L</span></span> <span className="text-sm italic">a Lorenzo Oni-Joseph production</span></p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
