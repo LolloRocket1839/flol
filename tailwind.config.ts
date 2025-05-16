@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,17 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// FinTool custom colors
+				fintool: {
+					blue: {
+						DEFAULT: '#1a365d',
+						light: '#2a4a7d'
+					},
+					teal: {
+						DEFAULT: '#0d9488',
+						light: '#14b8a6'
+					}
 				}
 			},
 			borderRadius: {
