@@ -32,9 +32,7 @@ const Footer = () => {
           </div>
           <div>
             <h3 className="text-lg font-bold mb-4">Informazioni</h3>
-            <p className="text-gray-300">
-              FinTool è un'applicazione open source per l'educazione finanziaria.
-            </p>
+            <p className="text-gray-300">FLoL è un'applicazione open source per l'educazione finanziaria.</p>
           </div>
         </div>
         <div className="mt-8 pt-4 border-t border-gray-700 text-center text-gray-300">
