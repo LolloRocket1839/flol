@@ -25,17 +25,28 @@ const BlogPage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        setIsLoading(true);
+        console.log("Fetching articles from Supabase...");
+        
         const { data, error } = await supabase
           .from('articles')
           .select('*')
           .eq('published', true)
           .order('date', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+          console.error("Error fetching articles:", error);
+          throw error;
+        }
+        
+        // Log the retrieved data
+        console.log("Retrieved articles:", data);
         
         // If no articles found in the database, add default articles
         if (!data || data.length === 0) {
-          const articles = [
+          console.log("No articles found, adding default articles...");
+          
+          const defaultArticles = [
             {
               title: "Comprendere l'Adattamento Edonico: Perché i Piaceri della Vita Svaniscono",
               slug: "comprendere-adattamento-edonico",
@@ -168,13 +179,20 @@ const BlogPage = () => {
             }
           ];
           
-          for (const article of articles) {
+          console.log("Inserendo articoli predefiniti...");
+          
+          for (const article of defaultArticles) {
             const { error: insertError } = await supabase
               .from('articles')
               .insert([article]);
               
-            if (insertError) throw insertError;
+            if (insertError) {
+              console.error("Errore durante l'inserimento dell'articolo:", insertError);
+              throw insertError;
+            }
           }
+          
+          console.log("Articoli predefiniti inseriti, recuperando...");
           
           // Fetch again to get the newly inserted articles with their IDs
           const { data: refreshedData, error: refreshError } = await supabase
@@ -183,18 +201,24 @@ const BlogPage = () => {
             .eq('published', true)
             .order('date', { ascending: false });
             
-          if (refreshError) throw refreshError;
+          if (refreshError) {
+            console.error("Errore durante il recupero degli articoli aggiornati:", refreshError);
+            throw refreshError;
+          }
+          
+          console.log("Articoli recuperati dopo l'inserimento:", refreshedData);
           setPosts(refreshedData || []);
         } else {
+          console.log("Articoli trovati nel database:", data.length);
           setPosts(data);
         }
       } catch (error: any) {
+        console.error("Errore catturato nel blocco try-catch:", error);
         toast({
           title: 'Errore',
           description: error.message || 'Impossibile caricare gli articoli',
           variant: 'destructive',
         });
-        console.error(error);
       } finally {
         setIsLoading(false);
       }
@@ -279,7 +303,7 @@ const BlogPage = () => {
                       {number}
                     </PaginationLink>
                   </PaginationItem>
-                ))}
+                )}
                 
                 {currentPage < totalPages && (
                   <PaginationItem>
