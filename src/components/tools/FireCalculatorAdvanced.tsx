@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -274,7 +273,7 @@ const FireCalculatorAdvanced: React.FC = () => {
                       max={80}
                       step={1}
                       value={[targetAge]}
-                      onValueChange={(values) => setTargetAge(values[0])}
+                      onValueChange={(values) => setTargetAge(Number(values[0]))}
                     />
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
                       <span>Ottimo</span>
@@ -376,8 +375,8 @@ const FireCalculatorAdvanced: React.FC = () => {
                       step={1}
                       value={[savingsRate]}
                       onValueChange={(values) => {
-                        setSavingsRate(values[0]);
-                        setAnnualExpenses(annualIncome * (1 - values[0] / 100));
+                        setSavingsRate(Number(values[0]));
+                        setAnnualExpenses(annualIncome * (1 - Number(values[0]) / 100));
                       }}
                     />
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -437,7 +436,7 @@ const FireCalculatorAdvanced: React.FC = () => {
                       max={12}
                       step={0.1}
                       value={[annualReturn]}
-                      onValueChange={(values) => setAnnualReturn(values[0])}
+                      onValueChange={(values) => setAnnualReturn(Number(values[0]))}
                     />
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
                       <span>1%</span>
@@ -513,7 +512,7 @@ const FireCalculatorAdvanced: React.FC = () => {
                       max={5}
                       step={0.1}
                       value={[withdrawalRate]}
-                      onValueChange={(values) => setWithdrawalRate(values[0])}
+                      onValueChange={(values) => setWithdrawalRate(Number(values[0]))}
                     />
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
                       <span>2%</span>
