@@ -35,5 +35,12 @@ export const tools: Tool[] = [
     description: "Organizza e visualizza il tuo budget mensile con il metodo 50/30/20",
     icon: "💰",
     category: "Gestione"
+  },
+  {
+    slug: "mortgage-calculator",
+    title: "Calcolatore Mutuo",
+    description: "Calcola rate, interessi totali e crea piani di ammortamento dettagliati per il tuo mutuo",
+    icon: "🏠",
+    category: "Immobiliare"
   }
 ];

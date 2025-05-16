@@ -8,6 +8,7 @@ import InterestCalculator from '@/components/tools/InterestCalculator';
 import FireCalculator from '@/components/tools/FireCalculator';
 import FireCalculatorAdvanced from '@/components/tools/FireCalculatorAdvanced';
 import BudgetCalculator from '@/components/tools/BudgetCalculator';
+import MortgageCalculator from '@/components/tools/MortgageCalculator';
 
 const ToolPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -36,6 +37,8 @@ const ToolPage = () => {
         return <FireCalculatorAdvanced />;
       case 'budget-calculator':
         return <BudgetCalculator />;
+      case 'mortgage-calculator':
+        return <MortgageCalculator />;
       default:
         return (
           <div className="text-center py-8">
