@@ -1,13 +1,18 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+
 const Navbar = () => {
   return <header className="bg-white border-b border-gray-200 shadow-sm">
       <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between">
         <div className="flex items-center mb-4 sm:mb-0">
           <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-fintool-blue">
-              Fin<span className="text-fintool-teal">Lol</span>
+            <span className="text-2xl font-bold">
+              <span className="text-fintool-blue">F</span>
+              <span className="text-fintool-teal italic transform -rotate-6 inline-block">L</span>
+              <span className="text-fintool-blue">o</span>
+              <span className="text-fintool-teal">L</span>
             </span>
           </Link>
         </div>
@@ -22,4 +27,5 @@ const Navbar = () => {
       </div>
     </header>;
 };
+
 export default Navbar;
