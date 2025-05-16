@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
-import { InfoCircle, TrendingUp, DollarSign, LineChart, PieChart } from 'lucide-react';
+import { Info, TrendingUp, DollarSign, LineChart, PieChart } from 'lucide-react';
 import {
   ChartContainer,
   ChartTooltip,
@@ -521,7 +521,7 @@ const FireCalculatorAdvanced: React.FC = () => {
                       <span>5%</span>
                     </div>
                     <div className="text-xs text-gray-500 mt-1 flex items-center">
-                      <InfoCircle className="w-4 h-4 inline mr-1" />
+                      <Info className="w-4 h-4 inline mr-1" />
                       <span>
                         Range sicuro: 3-4%. Valori più alti aumentano il rischio di esaurire i fondi.
                       </span>
