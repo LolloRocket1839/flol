@@ -1,6 +1,5 @@
 
 import { marked } from 'marked';
-import matter from 'gray-matter';
 
 export interface BlogPost {
   slug: string;
@@ -12,13 +11,13 @@ export interface BlogPost {
 
 // Hardcoded blog posts for this demo
 // In a real Next.js app this would use fs to read from actual files
-const blogPosts: Record<string, string> = {
-  'primo-articolo': `---
-title: Come iniziare a investire con piccole somme
-date: 2023-05-15
-excerpt: Una guida per chi vuole iniziare a investire anche con piccole somme di denaro
----
-
+const blogPosts: Record<string, BlogPost> = {
+  'primo-articolo': {
+    slug: 'primo-articolo',
+    title: 'Come iniziare a investire con piccole somme',
+    date: '2023-05-15',
+    excerpt: 'Una guida per chi vuole iniziare a investire anche con piccole somme di denaro',
+    content: marked(`
 # Come iniziare a investire con piccole somme
 
 Investire non è solo per i ricchi. Anche chi ha piccole somme può iniziare a costruire un portafoglio di investimenti.
@@ -49,13 +48,14 @@ Esistono diverse app che ti permettono di iniziare a investire con somme minime,
 - Pensa a lungo termine
 - Continua a educarti sul mondo finanziario
 
-Ricorda, l'importante non è quanto investi all'inizio, ma la costanza e la disciplina nel tempo.`,
-  'secondo-articolo': `---
-title: L'importanza del fondo di emergenza
-date: 2023-06-20
-excerpt: Perché è fondamentale avere un fondo di emergenza e come costruirlo
----
-
+Ricorda, l'importante non è quanto investi all'inizio, ma la costanza e la disciplina nel tempo.`)
+  },
+  'secondo-articolo': {
+    slug: 'secondo-articolo',
+    title: 'L\'importanza del fondo di emergenza',
+    date: '2023-06-20',
+    excerpt: 'Perché è fondamentale avere un fondo di emergenza e come costruirlo',
+    content: marked(`
 # L'importanza del fondo di emergenza
 
 Prima di iniziare a investire, è fondamentale costruire un fondo di emergenza adeguato alle proprie necessità.
@@ -94,22 +94,12 @@ Buone opzioni includono:
 4. Utilizza bonus o entrate straordinarie
 5. Rivaluta periodicamente l'importo necessario
 
-Avere un fondo di emergenza ti darà tranquillità e ti permetterà di affrontare gli imprevisti senza indebitarti o vendere i tuoi investimenti nei momenti sbagliati.`
+Avere un fondo di emergenza ti darà tranquillità e ti permetterà di affrontare gli imprevisti senza indebitarti o vendere i tuoi investimenti nei momenti sbagliati.`)
+  }
 };
 
 export function getAllPosts(): BlogPost[] {
-  const slugs = Object.keys(blogPosts);
-  const posts = slugs.map(slug => {
-    const raw = blogPosts[slug];
-    const { data, content } = matter(raw);
-    return {
-      slug,
-      title: data.title,
-      date: data.date,
-      excerpt: data.excerpt,
-      content: marked(content) as string
-    };
-  });
+  const posts = Object.values(blogPosts);
   
   // Sort posts by date (newest first)
   return posts.sort((a, b) => {
@@ -118,15 +108,5 @@ export function getAllPosts(): BlogPost[] {
 }
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
-  const raw = blogPosts[slug];
-  if (!raw) return undefined;
-  
-  const { data, content } = matter(raw);
-  return {
-    slug,
-    title: data.title,
-    date: data.date,
-    excerpt: data.excerpt,
-    content: marked(content) as string
-  };
+  return blogPosts[slug];
 }
