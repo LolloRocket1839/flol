@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { Article } from '@/types/article';
-import { Loader2 } from 'lucide-react';
+import { Loader2, RefreshCw } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { 
   Pagination, 
@@ -19,39 +19,38 @@ import {
 const BlogPage = () => {
   const [posts, setPosts] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 4;
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setIsLoading(true);
-        console.log("Fetching articles from Supabase...");
-        
-        const { data, error } = await supabase
-          .from('articles')
-          .select('*')
-          .eq('published', true)
-          .order('date', { ascending: false });
+  const fetchPosts = async () => {
+    try {
+      setIsLoading(true);
+      console.log("Fetching articles from Supabase...");
+      
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('published', true)
+        .order('date', { ascending: false });
 
-        if (error) {
-          console.error("Error fetching articles:", error);
-          throw error;
-        }
+      if (error) {
+        console.error("Error fetching articles:", error);
+        throw error;
+      }
+      
+      console.log("Retrieved articles:", data);
+      
+      // If no articles found in the database, add default articles
+      if (!data || data.length === 0) {
+        console.log("No articles found, adding default articles...");
         
-        // Log the retrieved data
-        console.log("Retrieved articles:", data);
-        
-        // If no articles found in the database, add default articles
-        if (!data || data.length === 0) {
-          console.log("No articles found, adding default articles...");
-          
-          const defaultArticles = [
-            {
-              title: "Il Potere dei Piccoli Risparmi Regolari",
-              slug: "potere-piccoli-risparmi-regolari",
-              excerpt: "Gli studi rivelano che le persone che risparmiano piccole somme con regolarità accumulano patrimoni significativamente maggiori rispetto a chi fa pochi investimenti consistenti.",
-              content: `<h1>Il Potere dei Piccoli Risparmi Regolari: La Strategia Che Batte i Grandi Investimenti Occasionali</h1>
+        const defaultArticles = [
+          {
+            title: "Il Potere dei Piccoli Risparmi Regolari",
+            slug: "potere-piccoli-risparmi-regolari",
+            excerpt: "Gli studi rivelano che le persone che risparmiano piccole somme con regolarità accumulano patrimoni significativamente maggiori rispetto a chi fa pochi investimenti consistenti.",
+            content: `<h1>Il Potere dei Piccoli Risparmi Regolari: La Strategia Che Batte i Grandi Investimenti Occasionali</h1>
 <p>Hai mai pensato che per costruire un patrimonio significativo servano grandi somme di denaro? Forse sogni di fare quell'investimento importante "appena avrai messo da parte abbastanza". Questa convinzione, per quanto diffusa, è uno dei più grandi ostacoli alla costruzione di ricchezza per le famiglie normali.</p>
 
 <h2>Perché i Piccoli Risparmi Regolari Funzionano Meglio</h2>
@@ -116,14 +115,14 @@ const BlogPage = () => {
 <p>Il messaggio più importante da ricordare è che non è quanto risparmi in un singolo mese che fa la differenza, ma la costanza nel tempo. La matematica finanziaria è chiara: è meglio risparmiare 50€ ogni mese per sempre che 200€ per tre mesi e poi smettere perché è troppo difficile.</p>
 
 <p>Come dice il vecchio proverbio cinese: "Il momento migliore per piantare un albero era vent'anni fa. Il secondo momento migliore è adesso." Non aspettare di avere la somma "giusta" per iniziare a costruire il tuo patrimonio. Inizia oggi, con qualunque cifra ti sia possibile, e lascia che il tempo e la costanza lavorino per te.</p>`,
-              date: new Date().toISOString(),
-              published: true
-            },
-            {
-              title: "I Costi Nascosti Che Divorano i Tuoi Investimenti",
-              slug: "costi-nascosti-investimenti",
-              excerpt: "Quando parliamo di investimenti, tendiamo a concentrarci sui rendimenti potenziali, ma c'è un elemento cruciale che spesso passa in secondo piano: i costi.",
-              content: `<h1>I Costi Nascosti Che Divorano i Tuoi Investimenti: La Guida Completa per Proteggere il Tuo Patrimonio</h1>
+            date: new Date().toISOString(),
+            published: true
+          },
+          {
+            title: "I Costi Nascosti Che Divorano i Tuoi Investimenti",
+            slug: "costi-nascosti-investimenti",
+            excerpt: "Quando parliamo di investimenti, tendiamo a concentrarci sui rendimenti potenziali, ma c'è un elemento cruciale che spesso passa in secondo piano: i costi.",
+            content: `<h1>I Costi Nascosti Che Divorano i Tuoi Investimenti: La Guida Completa per Proteggere il Tuo Patrimonio</h1>
 <p>Quando parliamo di investimenti, tendiamo a concentrarci principalmente sui rendimenti potenziali: "Questo fondo ha reso il 7% nell'ultimo anno!" o "Quell'azione è cresciuta del 12% in sei mesi!". Ma c'è un elemento cruciale che spesso passa in secondo piano e che, nel lungo periodo, può fare una differenza enorme sui tuoi risultati finanziari: i costi.</p>
 
 <h2>L'Effetto Devastante delle Commissioni: I Numeri Non Mentono</h2>
@@ -247,14 +246,14 @@ const BlogPage = () => {
 <p>I costi possono sembrare dettagli marginali quando si scelgono investimenti, ma nel lungo periodo rappresentano uno dei fattori più determinanti per il successo finanziario. Come dice John Bogle, fondatore di Vanguard: "Nel mondo degli investimenti, non ottieni ciò che paghi. Ottieni ciò che non paghi."</p>
 
 <p>Ricorda che risparmiare l'1-2% di costi all'anno può sembrare poco significativo oggi, ma nel lungo periodo può letteralmente significare centinaia di migliaia di euro di differenza nel tuo patrimonio finale. Pochi minuti dedicati a comprendere e minimizzare i costi dei tuoi investimenti potrebbero essere tra i minuti più redditizi della tua vita.</p>`,
-              date: new Date().toISOString(),
-              published: true
-            },
-            {
-              title: "Comprendere l'Adattamento Edonico: Perché i Piaceri della Vita Svaniscono",
-              slug: "comprendere-adattamento-edonico",
-              excerpt: "L'adattamento edonico—la nostra tendenza a tornare a un livello base di felicità nonostante cambiamenti di vita positivi o negativi—è tra i fenomeni più documentati nella ricerca sul benessere.",
-              content: `<p>L'adattamento edonico—la nostra tendenza a tornare a un livello base di felicità nonostante cambiamenti di vita positivi o negativi—è tra i fenomeni più documentati nella ricerca sul benessere. Questo meccanismo psicologico spiega perché sia i vincitori della lotteria che le vittime di incidenti tendono a tornare ai loro livelli di felicità pre-evento nel tempo (Brickman et al., 1978).</p>
+            date: new Date().toISOString(),
+            published: true
+          },
+          {
+            title: "Comprendere l'Adattamento Edonico: Perché i Piaceri della Vita Svaniscono",
+            slug: "comprendere-adattamento-edonico",
+            excerpt: "L'adattamento edonico—la nostra tendenza a tornare a un livello base di felicità nonostante cambiamenti di vita positivi o negativi—è tra i fenomeni più documentati nella ricerca sul benessere.",
+            content: `<p>L'adattamento edonico—la nostra tendenza a tornare a un livello base di felicità nonostante cambiamenti di vita positivi o negativi—è tra i fenomeni più documentati nella ricerca sul benessere. Questo meccanismo psicologico spiega perché sia i vincitori della lotteria che le vittime di incidenti tendono a tornare ai loro livelli di felicità pre-evento nel tempo (Brickman et al., 1978).</p>
 
 <h2>La Scienza Dietro l'Adattamento</h2>
 
@@ -299,14 +298,14 @@ const BlogPage = () => {
 <p>Sheldon, K. M., & Lyubomirsky, S. (2012). The challenge of staying happier: Testing the Hedonic Adaptation Prevention model. Personality and Social Psychology Bulletin, 38(5), 670-680.</p>
 
 <p>Wilson, T. D., & Gilbert, D. T. (2008). Explaining away: A model of affective adaptation. Perspectives on Psychological Science, 3(5), 370-386.</p>`,
-              date: new Date().toISOString(),
-              published: true
-            },
-            {
-              title: "La Scienza della Formazione delle Abitudini: Oltre la Forza di Volontà",
-              slug: "scienza-formazione-abitudini",
-              excerpt: "Le abitudini—routine comportamentali automatiche innescate da stimoli contestuali—rappresentano circa il 43% delle nostre azioni quotidiane secondo la ricerca di Wood et al. (2002).",
-              content: `<p>Le abitudini—routine comportamentali automatiche innescate da stimoli contestuali—rappresentano circa il 43% delle nostre azioni quotidiane secondo la ricerca di Wood et al. (2002). Mentre la saggezza convenzionale enfatizza la forza di volontà e la motivazione per il cambiamento comportamentale, la ricerca moderna rivela che comprendere i meccanismi della formazione delle abitudini offre percorsi più affidabili per un cambiamento duraturo.</p>
+            date: new Date().toISOString(),
+            published: true
+          },
+          {
+            title: "La Scienza della Formazione delle Abitudini: Oltre la Forza di Volontà",
+            slug: "scienza-formazione-abitudini",
+            excerpt: "Le abitudini—routine comportamentali automatiche innescate da stimoli contestuali—rappresentano circa il 43% delle nostre azioni quotidiane secondo la ricerca di Wood et al. (2002).",
+            content: `<p>Le abitudini—routine comportamentali automatiche innescate da stimoli contestuali—rappresentano circa il 43% delle nostre azioni quotidiane secondo la ricerca di Wood et al. (2002). Mentre la saggezza convenzionale enfatizza la forza di volontà e la motivazione per il cambiamento comportamentale, la ricerca moderna rivela che comprendere i meccanismi della formazione delle abitudini offre percorsi più affidabili per un cambiamento duraturo.</p>
 
 <h2>La Base Neurologica delle Abitudini</h2>
 
@@ -377,56 +376,58 @@ const BlogPage = () => {
 <p>Wood, W., Quinn, J. M., & Kashy, D. A. (2002). Habits in everyday life: Thought, emotion, and action. Journal of Personality and Social Psychology, 83(6), 1281-1297.</p>
 
 <p>Wood, W., Tam, L., & Witt, M. G. (2005). Changing circumstances, disrupting habits. Journal of Personality and Social Psychology, 88(6), 918-933.</p>`,
-              date: new Date().toISOString(),
-              published: true
-            }
-          ];
-          
-          console.log("Inserendo articoli predefiniti...");
-          
-          for (const article of defaultArticles) {
-            const { error: insertError } = await supabase
-              .from('articles')
-              .insert([article]);
-              
-            if (insertError) {
-              console.error("Errore durante l'inserimento dell'articolo:", insertError);
-              throw insertError;
-            }
+            date: new Date().toISOString(),
+            published: true
           }
-          
-          console.log("Articoli predefiniti inseriti, recuperando...");
-          
-          // Fetch again to get the newly inserted articles with their IDs
-          const { data: refreshedData, error: refreshError } = await supabase
+        ];
+        
+        console.log("Inserendo articoli predefiniti...");
+        
+        for (const article of defaultArticles) {
+          const { error: insertError } = await supabase
             .from('articles')
-            .select('*')
-            .eq('published', true)
-            .order('date', { ascending: false });
+            .insert([article]);
             
-          if (refreshError) {
-            console.error("Errore durante il recupero degli articoli aggiornati:", refreshError);
-            throw refreshError;
+          if (insertError) {
+            console.error("Errore durante l'inserimento dell'articolo:", insertError);
+            throw insertError;
           }
-          
-          console.log("Articoli recuperati dopo l'inserimento:", refreshedData);
-          setPosts(refreshedData || []);
-        } else {
-          console.log("Articoli trovati nel database:", data.length);
-          setPosts(data);
         }
-      } catch (error: any) {
-        console.error("Errore catturato nel blocco try-catch:", error);
-        toast({
-          title: 'Errore',
-          description: error.message || 'Impossibile caricare gli articoli',
-          variant: 'destructive',
-        });
-      } finally {
-        setIsLoading(false);
+        
+        console.log("Articoli predefiniti inseriti, recuperando...");
+        
+        // Fetch again to get the newly inserted articles with their IDs
+        const { data: refreshedData, error: refreshError } = await supabase
+          .from('articles')
+          .select('*')
+          .eq('published', true)
+          .order('date', { ascending: false });
+          
+        if (refreshError) {
+          console.error("Errore durante il recupero degli articoli aggiornati:", refreshError);
+          throw refreshError;
+        }
+        
+        console.log("Articoli recuperati dopo l'inserimento:", refreshedData);
+        setPosts(refreshedData || []);
+      } else {
+        console.log("Articoli trovati nel database:", data.length);
+        setPosts(data);
       }
-    };
+    } catch (error: any) {
+      console.error("Errore catturato nel blocco try-catch:", error);
+      toast({
+        title: 'Errore',
+        description: error.message || 'Impossibile caricare gli articoli',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
 
+  useEffect(() => {
     fetchPosts();
   }, []);
 
@@ -437,6 +438,11 @@ const BlogPage = () => {
   const totalPages = Math.ceil(posts.length / postsPerPage);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    fetchPosts();
+  };
 
   if (isLoading) {
     return (
@@ -455,9 +461,32 @@ const BlogPage = () => {
         </p>
       </div>
 
+      <div className="flex justify-end mb-4">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleRefresh} 
+          disabled={isRefreshing}
+          className="flex items-center gap-2"
+        >
+          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          Aggiorna articoli
+        </Button>
+      </div>
+
       {posts.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-xl text-gray-500">Nessun articolo pubblicato.</p>
+          <p className="text-xl text-gray-500 mb-6">Nessun articolo trovato.</p>
+          <Button onClick={handleRefresh} disabled={isRefreshing}>
+            {isRefreshing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Caricamento...
+              </>
+            ) : (
+              'Carica articoli predefiniti'
+            )}
+          </Button>
         </div>
       ) : (
         <>
