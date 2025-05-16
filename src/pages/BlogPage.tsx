@@ -303,7 +303,7 @@ const BlogPage = () => {
                       {number}
                     </PaginationLink>
                   </PaginationItem>
-                )}
+                ))}
                 
                 {currentPage < totalPages && (
                   <PaginationItem>
