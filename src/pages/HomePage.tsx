@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+
 const HomePage = () => {
   return <div className="space-y-12">
       <section className="py-16 bg-gradient-to-r from-fintool-blue to-fintool-blue-light text-white rounded-lg mb-12">
@@ -25,7 +27,40 @@ const HomePage = () => {
 
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Un po' di educazione finanziaria</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">
+            <span className="inline-block transform hover:scale-110 transition-transform">U</span>
+            <span className="inline-block transform translate-y-1 hover:scale-110 transition-transform">n</span>
+            <span className="inline-block transform hover:scale-110 transition-transform"> </span>
+            <span className="inline-block transform -translate-y-1 hover:scale-110 transition-transform">p</span>
+            <span className="inline-block transform translate-y-1 hover:scale-110 transition-transform">o</span>
+            <span className="inline-block transform hover:scale-110 transition-transform">'</span>
+            <span className="inline-block transform hover:scale-110 transition-transform"> </span>
+            <span className="inline-block transform hover:scale-110 transition-transform">d</span>
+            <span className="inline-block transform -translate-y-1 hover:scale-110 transition-transform">i</span>
+            <span className="inline-block transform hover:scale-110 transition-transform"> </span>
+            <span className="inline-block text-fintool-blue transform translate-y-1 hover:scale-110 transition-transform">e</span>
+            <span className="inline-block text-fintool-blue transform -translate-y-1 hover:scale-110 transition-transform">d</span>
+            <span className="inline-block text-fintool-blue transform hover:scale-110 transition-transform">u</span>
+            <span className="inline-block text-fintool-blue transform translate-y-1 hover:scale-110 transition-transform">c</span>
+            <span className="inline-block text-fintool-blue transform -translate-y-1 hover:scale-110 transition-transform">a</span>
+            <span className="inline-block text-fintool-blue transform translate-y-1 hover:scale-110 transition-transform">z</span>
+            <span className="inline-block text-fintool-blue transform -translate-y-1 hover:scale-110 transition-transform">i</span>
+            <span className="inline-block text-fintool-blue transform hover:scale-110 transition-transform">o</span>
+            <span className="inline-block text-fintool-blue transform translate-y-1 hover:scale-110 transition-transform">n</span>
+            <span className="inline-block text-fintool-blue transform -translate-y-1 hover:scale-110 transition-transform">e</span>
+            <span className="inline-block transform hover:scale-110 transition-transform"> </span>
+            <span className="inline-block text-fintool-teal transform translate-y-1 hover:scale-110 transition-transform">f</span>
+            <span className="inline-block text-fintool-teal transform -translate-y-1 hover:scale-110 transition-transform">i</span>
+            <span className="inline-block text-fintool-teal transform hover:scale-110 transition-transform">n</span>
+            <span className="inline-block text-fintool-teal transform translate-y-1 hover:scale-110 transition-transform">a</span>
+            <span className="inline-block text-fintool-teal transform -translate-y-1 hover:scale-110 transition-transform">n</span>
+            <span className="inline-block text-fintool-teal transform translate-y-1 hover:scale-110 transition-transform">z</span>
+            <span className="inline-block text-fintool-teal transform -translate-y-1 hover:scale-110 transition-transform">i</span>
+            <span className="inline-block text-fintool-teal transform translate-y-1 hover:scale-110 transition-transform">a</span>
+            <span className="inline-block text-fintool-teal transform -translate-y-1 hover:scale-110 transition-transform">r</span>
+            <span className="inline-block text-fintool-teal transform translate-y-1 hover:scale-110 transition-transform">i</span>
+            <span className="inline-block text-fintool-teal transform -translate-y-1 hover:scale-110 transition-transform">a</span>
+          </h2>
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
