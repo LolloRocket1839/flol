@@ -7,10 +7,20 @@ import { supabase } from '@/integrations/supabase/client';
 import { Article } from '@/types/article';
 import { Loader2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious
+} from '@/components/ui/pagination';
 
 const BlogPage = () => {
   const [posts, setPosts] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 4;
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -23,13 +33,14 @@ const BlogPage = () => {
 
         if (error) throw error;
         
-        // If no articles found in the database, add a default article
+        // If no articles found in the database, add default articles
         if (!data || data.length === 0) {
-          const newArticle = {
-            title: "Comprendere l'Adattamento Edonico: Perché i Piaceri della Vita Svaniscono",
-            slug: "comprendere-adattamento-edonico",
-            excerpt: "L'adattamento edonico—la nostra tendenza a tornare a un livello base di felicità nonostante cambiamenti di vita positivi o negativi—è tra i fenomeni più documentati nella ricerca sul benessere.",
-            content: `<p>L'adattamento edonico—la nostra tendenza a tornare a un livello base di felicità nonostante cambiamenti di vita positivi o negativi—è tra i fenomeni più documentati nella ricerca sul benessere. Questo meccanismo psicologico spiega perché sia i vincitori della lotteria che le vittime di incidenti tendono a tornare ai loro livelli di felicità pre-evento nel tempo (Brickman et al., 1978).</p>
+          const articles = [
+            {
+              title: "Comprendere l'Adattamento Edonico: Perché i Piaceri della Vita Svaniscono",
+              slug: "comprendere-adattamento-edonico",
+              excerpt: "L'adattamento edonico—la nostra tendenza a tornare a un livello base di felicità nonostante cambiamenti di vita positivi o negativi—è tra i fenomeni più documentati nella ricerca sul benessere.",
+              content: `<p>L'adattamento edonico—la nostra tendenza a tornare a un livello base di felicità nonostante cambiamenti di vita positivi o negativi—è tra i fenomeni più documentati nella ricerca sul benessere. Questo meccanismo psicologico spiega perché sia i vincitori della lotteria che le vittime di incidenti tendono a tornare ai loro livelli di felicità pre-evento nel tempo (Brickman et al., 1978).</p>
 
 <h2>La Scienza Dietro l'Adattamento</h2>
 
@@ -74,17 +85,98 @@ const BlogPage = () => {
 <p>Sheldon, K. M., & Lyubomirsky, S. (2012). The challenge of staying happier: Testing the Hedonic Adaptation Prevention model. Personality and Social Psychology Bulletin, 38(5), 670-680.</p>
 
 <p>Wilson, T. D., & Gilbert, D. T. (2008). Explaining away: A model of affective adaptation. Perspectives on Psychological Science, 3(5), 370-386.</p>`,
-            date: new Date().toISOString(),
-            published: true
-          };
+              date: new Date().toISOString(),
+              published: true
+            },
+            {
+              title: "La Scienza della Formazione delle Abitudini: Oltre la Forza di Volontà",
+              slug: "scienza-formazione-abitudini",
+              excerpt: "Le abitudini—routine comportamentali automatiche innescate da stimoli contestuali—rappresentano circa il 43% delle nostre azioni quotidiane secondo la ricerca di Wood et al. (2002).",
+              content: `<p>Le abitudini—routine comportamentali automatiche innescate da stimoli contestuali—rappresentano circa il 43% delle nostre azioni quotidiane secondo la ricerca di Wood et al. (2002). Mentre la saggezza convenzionale enfatizza la forza di volontà e la motivazione per il cambiamento comportamentale, la ricerca moderna rivela che comprendere i meccanismi della formazione delle abitudini offre percorsi più affidabili per un cambiamento duraturo.</p>
+
+<h2>La Base Neurologica delle Abitudini</h2>
+
+<p>I meccanismi neurali alla base delle abitudini sono stati ben documentati attraverso studi di neuroimaging. La ricerca di Graybiel (2008) ha dimostrato che le abitudini sono principalmente codificate nella regione dei gangli della base del cervello, in particolare nello striato. Man mano che i comportamenti diventano abituali, il controllo si sposta dalla corteccia prefrontale (associata al processo decisionale deliberato) a queste strutture cerebrali più profonde che facilitano l'esecuzione automatica.</p>
+
+<p>Questa transizione neurologica spiega perché le abitudini consolidate richiedono un'attenzione cosciente minima e continuano nonostante le fluttuazioni nella motivazione. Come Duhigg (2012) ha riassunto dalla ricerca neuroscientifica, le abitudini creano "blocchi" neurali dove intere sequenze comportamentali vengono innescate da un singolo stimolo, operando al di sotto della consapevolezza cosciente.</p>
+
+<h2>Il Ciclo dell'Abitudine: Segnale, Routine, Ricompensa</h2>
+
+<p>La ricerca di Schultz (2016) ha identificato la struttura a tre componenti delle abitudini: segnale (innesco), routine (comportamento) e ricompensa (risultato). Questo "ciclo dell'abitudine" è stato costantemente convalidato in diversi contesti comportamentali.</p>
+
+<p>La componente di ricompensa si rivela particolarmente cruciale. La ricerca dopaminergica di Schultz et al. (1997) ha dimostrato che il rilascio di dopamina si verifica inizialmente durante la fase di ricompensa ma gradualmente si sposta alla fase di segnale man mano che le abitudini si formano. Questo spiega perché le abitudini consolidate possono persistere molto tempo dopo che le ricompense diminuiscono—l'anticipazione stessa diventa gratificante.</p>
+
+<h2>Scienza dell'Implementazione: Rendere Affidabile la Formazione delle Abitudini</h2>
+
+<p>Andando oltre la comprensione teorica, la ricerca sull'implementazione ha identificato approcci specifici che facilitano in modo affidabile la formazione delle abitudini:</p>
+
+<ul>
+<li><strong>Intenzioni di Implementazione:</strong> La meta-analisi di Gollwitzer e Sheeran (2006) sulle intenzioni di implementazione—piani specifici se-allora che collegano stimoli situazionali a azioni desiderate—ha rilevato che questo approccio aumentava i tassi di successo della formazione di abitudini del 91% rispetto alle sole intenzioni di obiettivo.</li>
+
+<li><strong>Stabilità Contestuale:</strong> Wood et al. (2005) hanno dimostrato che la coerenza ambientale ha un impatto drammatico sulla formazione delle abitudini. La loro ricerca ha mostrato che le abitudini si formano approssimativamente il 20% più velocemente in ambienti stabili e persistono il 60% più a lungo quando gli stimoli ambientali rimangono coerenti.</li>
+
+<li><strong>Sforzo Minimo Vitale:</strong> La ricerca di Fogg (2020) sulle "piccole abitudini" ha dimostrato che minimizzare lo sforzo richiesto aumenta lo sviluppo dell'automaticità. I suoi studi longitudinali hanno mostrato che i comportamenti che richiedono meno di 30 secondi per essere eseguiti hanno formato abitudini stabili in una media di 18 giorni, rispetto ai 66 giorni per comportamenti più complessi.</li>
+</ul>
+
+<h2>Il Mito della Regola dei 21 Giorni</h2>
+
+<p>Contrariamente alla credenza popolare, Lally et al. (2010) hanno scoperto che il tempo di formazione delle abitudini varia sostanzialmente in base alla complessità del comportamento e alle differenze individuali. La loro ricerca ha tracciato la formazione delle abitudini attraverso molteplici comportamenti e individui, trovando che lo sviluppo dell'automaticità variava da 18 a 254 giorni, con una mediana di 66 giorni. Questa ricerca contraddice direttamente la ampiamente citata ma non supportata "regola dei 21 giorni" per la formazione delle abitudini.</p>
+
+<p>Più significativamente, la loro ricerca ha identificato una curva matematica della formazione delle abitudini, mostrando che l'automaticità si sviluppa rapidamente durante le prime ripetizioni ma poi aumenta più lentamente fino a raggiungere un asintoto. Questo spiega perché l'iniziazione di un'abitudine spesso sembra difficile ma diventa progressivamente più facile con la ripetizione costante.</p>
+
+<h2>Applicazioni Pratiche</h2>
+
+<p>Le strategie basate sulla ricerca per la formazione delle abitudini includono:</p>
+
+<ul>
+<li><strong>Habit Stacking:</strong> Clear (2018) ha dimostrato l'efficacia di collegare nuove abitudini a routine consolidate. I suoi studi sul campo hanno mostrato che l'"habit stacking" (usare un'abitudine esistente come segnale per una nuova abitudine) aumentava la continuità del 37% rispetto all'uso di segnali arbitrari.</li>
+
+<li><strong>Accorpamento di Tentazioni:</strong> Milkman et al. (2014) hanno scoperto che accoppiare comportamenti voluti con attività immediatamente gratificanti aumentava l'aderenza del 29-34%. Il loro studio controllato con la frequenza in palestra ha mostrato che limitare gli audiolibri piacevoli alle sessioni di allenamento aumentava significativamente la frequenza dell'esercizio.</li>
+
+<li><strong>Design Ambientale:</strong> Neal et al. (2012) hanno dimostrato che la ristrutturazione ambientale—modificare gli spazi fisici per facilitare i comportamenti desiderati—aumentava i tassi di successo della formazione delle abitudini del 39-47% rispetto agli interventi incentrati sulla motivazione.</li>
+</ul>
+
+<p>Comprendere la scienza della formazione delle abitudini permette agli individui di lavorare con piuttosto che contro i meccanismi naturali del loro cervello, rendendo il cambiamento comportamentale più affidabile e sostenibile rispetto agli approcci che si basano principalmente sulla motivazione e sulla forza di volontà.</p>
+
+<h2>Riferimenti</h2>
+
+<p>Clear, J. (2018). Atomic habits: An easy & proven way to build good habits & break bad ones. Penguin.</p>
+
+<p>Duhigg, C. (2012). The power of habit: Why we do what we do in life and business. Random House.</p>
+
+<p>Fogg, B. J. (2020). Tiny habits: The small changes that change everything. Houghton Mifflin Harcourt.</p>
+
+<p>Gollwitzer, P. M., & Sheeran, P. (2006). Implementation intentions and goal achievement: A meta‐analysis of effects and processes. Advances in Experimental Social Psychology, 38, 69-119.</p>
+
+<p>Graybiel, A. M. (2008). Habits, rituals, and the evaluative brain. Annual Review of Neuroscience, 31, 359-387.</p>
+
+<p>Lally, P., Van Jaarsveld, C. H., Potts, H. W., & Wardle, J. (2010). How are habits formed: Modelling habit formation in the real world. European Journal of Social Psychology, 40(6), 998-1009.</p>
+
+<p>Milkman, K. L., Minson, J. A., & Volpp, K. G. (2014). Holding the Hunger Games hostage at the gym: An evaluation of temptation bundling. Management Science, 60(2), 283-299.</p>
+
+<p>Neal, D. T., Wood, W., Labrecque, J. S., & Lally, P. (2012). How do habits guide behavior? Perceived and actual triggers of habits in daily life. Journal of Experimental Social Psychology, 48(2), 492-498.</p>
+
+<p>Schultz, W. (2016). Dopamine reward prediction error coding. Dialogues in Clinical Neuroscience, 18(1), 23-32.</p>
+
+<p>Schultz, W., Dayan, P., & Montague, P. R. (1997). A neural substrate of prediction and reward. Science, 275(5306), 1593-1599.</p>
+
+<p>Wood, W., Quinn, J. M., & Kashy, D. A. (2002). Habits in everyday life: Thought, emotion, and action. Journal of Personality and Social Psychology, 83(6), 1281-1297.</p>
+
+<p>Wood, W., Tam, L., & Witt, M. G. (2005). Changing circumstances, disrupting habits. Journal of Personality and Social Psychology, 88(6), 918-933.</p>`,
+              date: new Date().toISOString(),
+              published: true
+            }
+          ];
           
-          const { error: insertError } = await supabase
-            .from('articles')
-            .insert([newArticle]);
-            
-          if (insertError) throw insertError;
+          for (const article of articles) {
+            const { error: insertError } = await supabase
+              .from('articles')
+              .insert([article]);
+              
+            if (insertError) throw insertError;
+          }
           
-          // Fetch again to get the newly inserted article with its ID
+          // Fetch again to get the newly inserted articles with their IDs
           const { data: refreshedData, error: refreshError } = await supabase
             .from('articles')
             .select('*')
@@ -111,6 +203,14 @@ const BlogPage = () => {
     fetchPosts();
   }, []);
 
+  // Pagination logic
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(posts.length / postsPerPage);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[50vh]">
@@ -133,32 +233,63 @@ const BlogPage = () => {
           <p className="text-xl text-gray-500">Nessun articolo pubblicato.</p>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 gap-6">
-          {posts.map((post) => (
-            <Card key={post.slug} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle>
-                  <Link to={`/articoli/${post.slug}`} className="hover:text-fintool-teal transition-colors">
-                    {post.title}
-                  </Link>
-                </CardTitle>
-                <CardDescription>
-                  {new Date(post.date).toLocaleDateString('it-IT', {
-                    day: 'numeric', month: 'long', year: 'numeric'
-                  })}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>{post.excerpt}</p>
-              </CardContent>
-              <CardFooter>
-                <Button asChild variant="outline">
-                  <Link to={`/articoli/${post.slug}`}>Leggi l'articolo</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        <>
+          <div className="grid md:grid-cols-2 gap-6">
+            {currentPosts.map((post) => (
+              <Card key={post.slug} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <CardTitle>
+                    <Link to={`/articoli/${post.slug}`} className="hover:text-fintool-teal transition-colors">
+                      {post.title}
+                    </Link>
+                  </CardTitle>
+                  <CardDescription>
+                    {new Date(post.date).toLocaleDateString('it-IT', {
+                      day: 'numeric', month: 'long', year: 'numeric'
+                    })}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p>{post.excerpt}</p>
+                </CardContent>
+                <CardFooter>
+                  <Button asChild variant="outline">
+                    <Link to={`/articoli/${post.slug}`}>Leggi l'articolo</Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+          
+          {totalPages > 1 && (
+            <Pagination className="mt-8">
+              <PaginationContent>
+                {currentPage > 1 && (
+                  <PaginationItem>
+                    <PaginationPrevious onClick={() => paginate(currentPage - 1)} />
+                  </PaginationItem>
+                )}
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                  <PaginationItem key={number}>
+                    <PaginationLink 
+                      isActive={currentPage === number} 
+                      onClick={() => paginate(number)}
+                    >
+                      {number}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                
+                {currentPage < totalPages && (
+                  <PaginationItem>
+                    <PaginationNext onClick={() => paginate(currentPage + 1)} />
+                  </PaginationItem>
+                )}
+              </PaginationContent>
+            </Pagination>
+          )}
+        </>
       )}
     </div>
   );
