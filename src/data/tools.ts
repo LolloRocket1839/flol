@@ -28,5 +28,12 @@ export const tools: Tool[] = [
     description: "Pianifica il tuo percorso verso l'indipendenza finanziaria con un'analisi dettagliata e interattiva",
     icon: "⚡",
     category: "Pianificazione"
+  },
+  {
+    slug: "budget-calculator",
+    title: "Calcolatore Budget Mensile",
+    description: "Organizza e visualizza il tuo budget mensile con il metodo 50/30/20",
+    icon: "💰",
+    category: "Gestione"
   }
 ];
