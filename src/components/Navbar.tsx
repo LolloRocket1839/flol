@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Menu } from 'lucide-react';
@@ -12,7 +11,9 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="text-xl font-bold text-fintool-blue">FinTool</Link>
+              <Link to="/" className="text-xl font-bold text-fintool-blue">
+                F<span className="text-fintool-teal">L</span>o<span className="text-fintool-teal">L</span>
+              </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
               <NavLink 

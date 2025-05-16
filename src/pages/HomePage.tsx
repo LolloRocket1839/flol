@@ -33,7 +33,7 @@ const HomePage = () => {
             <span className="inline-block transform -translate-y-0.5 hover:scale-110 transition-transform">p</span>
             <span className="inline-block transform translate-y-0.5 hover:scale-110 transition-transform">o</span>
             <span className="inline-block transform hover:scale-110 transition-transform">'</span>
-            <span className="inline-block transform hover:scale-110 transition-transform"> </span> 
+            <span className="inline-block transform"> </span> 
             <span className="inline-block transform hover:scale-110 transition-transform">d</span>
             <span className="inline-block transform -translate-y-0.5 hover:scale-110 transition-transform">i</span>
             <span className="inline-block transform hover:scale-110 transition-transform"> </span> 
