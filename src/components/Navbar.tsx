@@ -2,11 +2,9 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Menu } from 'lucide-react';
-import { useAuthStore } from '@/lib/auth';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, isAdmin } = useAuthStore();
 
   return (
     <nav className="bg-white shadow-sm">
@@ -47,30 +45,6 @@ const Navbar = () => {
               >
                 Strumenti
               </NavLink>
-              {isAdmin && (
-                <NavLink 
-                  to="/admin" 
-                  className={({ isActive }) => 
-                    isActive 
-                      ? "px-3 py-2 text-sm font-medium text-fintool-teal" 
-                      : "px-3 py-2 text-sm font-medium text-gray-600 hover:text-fintool-blue"
-                  }
-                >
-                  Admin
-                </NavLink>
-              )}
-              {!user && (
-                <NavLink 
-                  to="/auth" 
-                  className={({ isActive }) => 
-                    isActive 
-                      ? "px-3 py-2 text-sm font-medium text-fintool-teal" 
-                      : "px-3 py-2 text-sm font-medium text-gray-600 hover:text-fintool-blue"
-                  }
-                >
-                  Accedi
-                </NavLink>
-              )}
             </div>
           </div>
           <div className="flex items-center sm:hidden">
@@ -109,24 +83,6 @@ const Navbar = () => {
             >
               Strumenti
             </Link>
-            {isAdmin && (
-              <Link 
-                to="/admin" 
-                className="block pl-3 pr-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-fintool-blue"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Admin
-              </Link>
-            )}
-            {!user && (
-              <Link 
-                to="/auth" 
-                className="block pl-3 pr-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-fintool-blue"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Accedi
-              </Link>
-            )}
           </div>
         </div>
       )}
