@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -21,6 +22,7 @@ import {
   Tooltip,
   ReferenceLine,
   CartesianGrid,
+  TooltipProps,
 } from "recharts";
 
 const FireCalculatorAdvanced: React.FC = () => {
@@ -202,6 +204,20 @@ const FireCalculatorAdvanced: React.FC = () => {
       }
     }
   }, []);
+
+  // Custom tooltip component to handle the type safely
+  const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-4 border rounded-lg shadow-lg">
+          <p className="font-semibold">{`Età: ${payload[0]?.payload?.age} anni`}</p>
+          <p className="text-fintool-teal">{`Patrimonio: ${formatCurrency(Number(payload[0]?.value || 0))}`}</p>
+          <p className="text-fintool-blue">{`Target FIRE: ${formatCurrency(Number(payload[0]?.payload?.target || 0))}`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="container mx-auto py-6">
@@ -627,20 +643,7 @@ const FireCalculatorAdvanced: React.FC = () => {
                         axisLine={false}
                         tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                       />
-                      <Tooltip
-                        content={({ active, payload }) => {
-                          if (active && payload && payload.length) {
-                            return (
-                              <div className="bg-white p-4 border rounded-lg shadow-lg">
-                                <p className="font-semibold">{`Età: ${payload[0].payload.age} anni`}</p>
-                                <p className="text-fintool-teal">{`Patrimonio: ${formatCurrency(payload[0].value)}`}</p>
-                                <p className="text-fintool-blue">{`Target FIRE: ${formatCurrency(payload[0].payload.target)}`}</p>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
+                      <Tooltip content={CustomTooltip} />
                       <ReferenceLine
                         y={requiredAssets}
                         stroke="#1a365d"
