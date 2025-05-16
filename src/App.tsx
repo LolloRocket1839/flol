@@ -1,36 +1,54 @@
 
+import { Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import BlogPage from "./pages/BlogPage";
-import BlogPostPage from "./pages/BlogPostPage";
-import ToolsPage from "./pages/ToolsPage";
-import ToolPage from "./pages/ToolPage";
-import NotFound from "./pages/NotFound";
-import Layout from "./components/Layout";
+import { AuthProvider } from './components/AuthProvider';
+import { AdminRoute } from './components/AdminRoute';
 
-const queryClient = new QueryClient();
+// Pages
+import HomePage from './pages/HomePage';
+import NotFound from './pages/NotFound';
+import BlogPage from './pages/BlogPage';
+import BlogPostPage from './pages/BlogPostPage';
+import ToolsPage from './pages/ToolsPage';
+import ToolPage from './pages/ToolPage';
+import AuthPage from './pages/AuthPage';
+import AdminPage from './pages/AdminPage';
+import ArticleEditorPage from './pages/ArticleEditorPage';
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout><HomePage /></Layout>} />
-          <Route path="/articoli" element={<Layout><BlogPage /></Layout>} />
-          <Route path="/articoli/:slug" element={<Layout><BlogPostPage /></Layout>} />
-          <Route path="/tool" element={<Layout><ToolsPage /></Layout>} />
-          <Route path="/tool/:slug" element={<Layout><ToolPage /></Layout>} />
-          <Route path="*" element={<Layout><NotFound /></Layout>} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+// Stili
+import './App.css';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Layout>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/articoli" element={<BlogPage />} />
+              <Route path="/articoli/:slug" element={<BlogPostPage />} />
+              <Route path="/tool" element={<ToolsPage />} />
+              <Route path="/tool/:slug" element={<ToolPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+
+              {/* Rotte protette admin */}
+              <Route element={<AdminRoute />}>
+                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/admin/new" element={<ArticleEditorPage />} />
+                <Route path="/admin/edit/:id" element={<ArticleEditorPage />} />
+              </Route>
+
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </Layout>
+        <Toaster />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
 
 export default App;

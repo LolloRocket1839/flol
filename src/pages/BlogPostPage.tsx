@@ -1,16 +1,55 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import { getPostBySlug } from '@/utils/markdown';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { Article } from '@/types/article';
+import { toast } from '@/hooks/use-toast';
 
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [post, setPost] = useState<Article | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (!slug) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('articles')
+          .select('*')
+          .eq('slug', slug)
+          .eq('published', true)
+          .single();
+
+        if (error) throw error;
+        setPost(data);
+      } catch (error: any) {
+        toast({
+          title: 'Errore',
+          description: error.message || 'Impossibile caricare l\'articolo',
+          variant: 'destructive',
+        });
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [slug]);
   
-  const post = slug ? getPostBySlug(slug) : undefined;
-  
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[50vh]">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
   if (!post) {
     return (
       <div className="text-center py-16">
