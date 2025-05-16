@@ -383,33 +383,55 @@ const BlogPage = () => {
         
         console.log("Inserendo articoli predefiniti...");
         
-        for (const article of defaultArticles) {
-          const { error: insertError } = await supabase
+        // Elimino gli articoli esistenti e inserisco quelli nuovi
+        try {
+          // Prima elimino gli articoli esistenti
+          const { error: deleteError } = await supabase
             .from('articles')
-            .insert([article]);
+            .delete()
+            .eq('published', true);
             
-          if (insertError) {
-            console.error("Errore durante l'inserimento dell'articolo:", insertError);
-            throw insertError;
+          if (deleteError) {
+            console.error("Errore durante l'eliminazione degli articoli:", deleteError);
+            // Continua comunque con l'inserimento
           }
-        }
-        
-        console.log("Articoli predefiniti inseriti, recuperando...");
-        
-        // Fetch again to get the newly inserted articles with their IDs
-        const { data: refreshedData, error: refreshError } = await supabase
-          .from('articles')
-          .select('*')
-          .eq('published', true)
-          .order('date', { ascending: false });
           
-        if (refreshError) {
-          console.error("Errore durante il recupero degli articoli aggiornati:", refreshError);
-          throw refreshError;
+          // Poi inserisco i nuovi articoli
+          for (const article of defaultArticles) {
+            const { error: insertError } = await supabase
+              .from('articles')
+              .insert([article]);
+              
+            if (insertError) {
+              console.error("Errore durante l'inserimento dell'articolo:", insertError);
+              throw insertError;
+            }
+          }
+          
+          console.log("Articoli predefiniti inseriti, recuperando...");
+          
+          // Fetch again to get the newly inserted articles with their IDs
+          const { data: refreshedData, error: refreshError } = await supabase
+            .from('articles')
+            .select('*')
+            .eq('published', true)
+            .order('date', { ascending: false });
+            
+          if (refreshError) {
+            console.error("Errore durante il recupero degli articoli aggiornati:", refreshError);
+            throw refreshError;
+          }
+          
+          console.log("Articoli recuperati dopo l'inserimento:", refreshedData);
+          setPosts(refreshedData || []);
+        } catch (error: any) {
+          console.error("Errore durante la gestione degli articoli:", error);
+          toast({
+            title: 'Errore',
+            description: error.message || 'Impossibile aggiornare gli articoli',
+            variant: 'destructive',
+          });
         }
-        
-        console.log("Articoli recuperati dopo l'inserimento:", refreshedData);
-        setPosts(refreshedData || []);
       } else {
         console.log("Articoli trovati nel database:", data.length);
         setPosts(data);
