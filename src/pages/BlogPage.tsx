@@ -41,9 +41,9 @@ const BlogPage = () => {
       
       console.log("Retrieved articles:", data);
       
-      // If no articles found in the database, add default articles
-      if (!data || data.length === 0) {
-        console.log("No articles found, adding default articles...");
+      // If no articles found in the database or we want to refresh with default ones
+      if (!data || data.length === 0 || isRefreshing) {
+        console.log("No articles found or refreshing, adding default articles...");
         
         const defaultArticles = [
           {
