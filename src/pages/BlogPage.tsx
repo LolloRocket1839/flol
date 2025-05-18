@@ -40,10 +40,11 @@ const BlogPage = () => {
       logDebug('Fetched articles from Supabase', data);
       
       if (data && data.length > 0) {
+        // We have articles, set them to state
         setPosts(data);
         logDebug('Set posts with all fetched articles', data);
       } else {
-        // If no articles found in the database or we want to refresh with default ones
+        // No articles found, add default ones
         console.log("No articles found or refreshing, adding default articles...");
         
         const defaultArticles = [
@@ -419,12 +420,11 @@ const BlogPage = () => {
             description: error.message || 'Impossibile aggiornare gli articoli',
             variant: 'destructive',
           });
+          
+          // If an error occurred during adding default articles, set empty posts
+          setPosts([]);
         }
-      } else {
-        setPosts([]);
-        logDebug('No articles returned from Supabase');
       }
-
     } catch (error: any) {
       console.error("Error fetching articles:", error);
       setPosts([]); // Set to empty array on error
