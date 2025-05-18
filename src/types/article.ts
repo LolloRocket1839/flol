@@ -1,12 +1,12 @@
-
 export interface Article {
-  id: string;
+  id: number;
   title: string;
   slug: string;
-  content: string;
   excerpt: string;
+  content?: string;
   date: string;
   published: boolean;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
+  language?: string;
 }

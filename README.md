@@ -4,6 +4,41 @@
 
 **URL**: https://lovable.dev/projects/ef9655a3-a9a4-4169-b5b8-6a59c3203859
 
+## Features
+
+### Thoughts of the Week
+
+The project includes a "Thoughts of the Week" section in the Financial Literacy Library where you can:
+
+- Share weekly thoughts about financial literacy
+- Add links to inspiring newsletters you've found
+- Easily update the content on a weekly basis
+
+To access this feature:
+1. Navigate to the "Biblioteca" section in the navigation bar
+2. The page allows you to add new thoughts and newsletter links
+3. All previously added thoughts are displayed in chronological order
+
+#### How to Update Weekly Thoughts
+
+1. Click the "Add New Thought" button
+2. Enter a title and your thoughts for the week
+3. Add links to any inspiring newsletters using the "Add Link" button
+4. Click "Save Thought" to publish your update
+
+### Database Setup
+
+The application uses Supabase for data storage. To set up the required tables:
+
+1. Make sure you have the Supabase CLI installed:
+   ```sh
+   npm install -g supabase
+   ```
+
+2. Run the migration script:
+   - On Windows: `.\supabase\run_migrations.ps1`
+   - On Linux/macOS: `bash ./supabase/run_migrations.sh`
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
@@ -59,6 +94,7 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase (for database)
 
 ## How can I deploy this project?
 

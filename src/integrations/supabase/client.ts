@@ -8,4 +8,38 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: {
+    persistSession: true,
+    detectSessionInUrl: true
+  },
+  global: {
+    fetch: fetch.bind(globalThis),
+    headers: {
+      'Cache-Control': 'max-age=3600' // Increased cache to 1 hour
+    }
+  },
+  // Add DB level caching to improve performance
+  db: {
+    schema: 'public'
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 1 // Limit realtime events to reduce overhead
+    }
+  }
+});
+
+// Create a memory cache for articles
+const articlesCache = new Map<string, any>();
+
+// Helper to get cached data
+export const getCachedData = (key: string) => {
+  return articlesCache.get(key);
+};
+
+// Helper to set cached data
+export const setCachedData = (key: string, data: any, ttl = 5 * 60 * 1000) => {
+  articlesCache.set(key, data);
+  setTimeout(() => articlesCache.delete(key), ttl); // Auto-expire after TTL
+};

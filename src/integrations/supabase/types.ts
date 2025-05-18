@@ -6,78 +6,133 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type Database = {
+export interface Database {
   public: {
     Tables: {
       articles: {
         Row: {
-          author_id: string | null
-          content: string
-          created_at: string
-          date: string
-          excerpt: string
-          id: string
-          published: boolean
-          slug: string
+          id: number
           title: string
-          updated_at: string
+          slug: string
+          excerpt: string
+          content: string
+          date: string
+          published: boolean
+          language?: string
         }
         Insert: {
-          author_id?: string | null
-          content: string
-          created_at?: string
-          date?: string
-          excerpt: string
-          id?: string
-          published?: boolean
-          slug: string
+          id?: number
           title: string
-          updated_at?: string
+          slug: string
+          excerpt: string
+          content: string
+          date?: string
+          published?: boolean
+          language?: string
         }
         Update: {
-          author_id?: string | null
-          content?: string
-          created_at?: string
-          date?: string
-          excerpt?: string
-          id?: string
-          published?: boolean
-          slug?: string
+          id?: number
           title?: string
-          updated_at?: string
+          slug?: string
+          excerpt?: string
+          content?: string
+          date?: string
+          published?: boolean
+          language?: string
         }
         Relationships: []
       }
-      user_roles: {
+      tools: {
         Row: {
-          created_at: string
-          id: string
-          role: string
-          user_id: string
+          id: number
+          title: string
+          slug: string
+          description: string
+          content: string
+          date: string
+          published: boolean
         }
         Insert: {
-          created_at?: string
-          id?: string
-          role: string
-          user_id: string
+          id?: number
+          title: string
+          slug: string
+          description: string
+          content: string
+          date?: string
+          published?: boolean
         }
         Update: {
-          created_at?: string
-          id?: string
-          role?: string
-          user_id?: string
+          id?: number
+          title?: string
+          slug?: string
+          description?: string
+          content?: string
+          date?: string
+          published?: boolean
         }
         Relationships: []
+      }
+      weekly_thoughts: {
+        Row: {
+          id: number
+          title: string
+          content: string
+          date: string
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          title: string
+          content: string
+          date?: string
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          title?: string
+          content?: string
+          date?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      newsletter_links: {
+        Row: {
+          id: number
+          title: string
+          url: string
+          thought_id: number
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          title: string
+          url: string
+          thought_id: number
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          title?: string
+          url?: string
+          thought_id?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_links_thought_id_fkey"
+            columns: ["thought_id"]
+            referencedRelation: "weekly_thoughts"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: { role: string }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
