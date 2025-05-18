@@ -22,10 +22,10 @@ const ToolsPage = () => {
               <div className="text-4xl mb-2">{tool.icon}</div>
               <CardTitle>
                 <Link to={`/tool/${tool.slug}`} className="hover:text-fintool-teal transition-colors">
-                  {tool.title}
+                  {tool.name}
                 </Link>
               </CardTitle>
-              <CardDescription>{tool.category}</CardDescription>
+              <CardDescription>{tool.description}</CardDescription>
             </CardHeader>
             <CardContent>
               <p>{tool.description}</p>

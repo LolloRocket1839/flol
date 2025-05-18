@@ -1,46 +1,70 @@
 
+import InterestCalculator from '@/components/tools/InterestCalculator';
+import MortgageCalculator from '@/components/tools/MortgageCalculator';
+import FireCalculator from '@/components/tools/FireCalculator';
+import BudgetCalculator from '@/components/tools/BudgetCalculator';
+import FireCalculatorAdvanced from '@/components/tools/FireCalculatorAdvanced';
+import CompoundInterestAdvancedCalculator from '@/components/tools/CompoundInterestAdvancedCalculator';
+
 export interface Tool {
+  id: string;
+  name: string;
   slug: string;
-  title: string;
   description: string;
-  icon: string;
-  category: string;
+  component: React.ComponentType<any>;
+  icon?: string;
 }
 
 export const tools: Tool[] = [
   {
-    slug: "interesse-composto",
-    title: "Calcolatore Interesse Composto",
-    description: "Calcola quanto cresceranno i tuoi investimenti nel tempo grazie all'interesse composto",
-    icon: "📈",
-    category: "Investimenti"
+    id: 'interest-calculator',
+    name: 'Calcolatore di Interesse',
+    slug: 'interesse-composto',
+    description: 'Calcola quanto crescerà il tuo denaro nel tempo',
+    component: InterestCalculator,
+    icon: '💰',
   },
   {
-    slug: "fire-calculator",
-    title: "Calcolatore FIRE",
-    description: "Calcola quando potrai raggiungere l'indipendenza finanziaria in base ai tuoi risparmi e spese",
-    icon: "🔥",
-    category: "Pianificazione"
+    id: 'compound-interest-advanced',
+    name: 'Interesse Composto Avanzato',
+    slug: 'interesse-composto-avanzato',
+    description: 'Simulazione avanzata con diverse frequenze di contribuzione',
+    component: CompoundInterestAdvancedCalculator,
+    icon: '📈',
   },
   {
-    slug: "fire-calculator-advanced",
-    title: "Calcolatore FIRE Avanzato",
-    description: "Pianifica il tuo percorso verso l'indipendenza finanziaria con un'analisi dettagliata e interattiva",
-    icon: "⚡",
-    category: "Pianificazione"
+    id: 'mortgage-calculator',
+    name: 'Calcolatore di Mutuo',
+    slug: 'mutuo',
+    description: 'Calcola la rata del mutuo e pianifica il tuo acquisto',
+    component: MortgageCalculator,
+    icon: '🏠',
   },
   {
-    slug: "budget-calculator",
-    title: "Calcolatore Budget Mensile",
-    description: "Organizza e visualizza il tuo budget mensile con il metodo 50/30/20",
-    icon: "💰",
-    category: "Gestione"
+    id: 'fire-calculator',
+    name: 'FIRE Calculator',
+    slug: 'fire-calculator',
+    description: 'Pianifica la tua indipendenza finanziaria',
+    component: FireCalculator,
+    icon: '🔥',
   },
   {
-    slug: "mortgage-calculator",
-    title: "Calcolatore Mutuo",
-    description: "Calcola rate, interessi totali e crea piani di ammortamento dettagliati per il tuo mutuo",
-    icon: "🏠",
-    category: "Immobiliare"
-  }
+    id: 'fire-advanced',
+    name: 'FIRE Avanzato',
+    slug: 'fire-avanzato',
+    description: 'Simulazione dettagliata del percorso verso la libertà finanziaria',
+    component: FireCalculatorAdvanced,
+    icon: '⚡',
+  },
+  {
+    id: 'budget-calculator',
+    name: 'Budget Mensile',
+    slug: 'budget-mensile',
+    description: 'Pianifica e ottimizza le tue spese mensili',
+    component: BudgetCalculator,
+    icon: '📊',
+  },
 ];
+
+export const getToolBySlug = (slug: string): Tool | undefined =>
+  tools.find((tool) => tool.slug === slug);

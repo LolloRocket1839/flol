@@ -3,18 +3,13 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { tools } from '@/data/tools';
-import InterestCalculator from '@/components/tools/InterestCalculator';
-import FireCalculator from '@/components/tools/FireCalculator';
-import FireCalculatorAdvanced from '@/components/tools/FireCalculatorAdvanced';
-import BudgetCalculator from '@/components/tools/BudgetCalculator';
-import MortgageCalculator from '@/components/tools/MortgageCalculator';
+import { getToolBySlug, tools } from '@/data/tools';
 
 const ToolPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   
-  const tool = tools.find(t => t.slug === slug);
+  const tool = getToolBySlug(slug || '');
   
   if (!tool) {
     return (
@@ -27,26 +22,8 @@ const ToolPage = () => {
     );
   }
 
-  const renderTool = () => {
-    switch(slug) {
-      case 'interesse-composto':
-        return <InterestCalculator />;
-      case 'fire-calculator':
-        return <FireCalculator />;
-      case 'fire-calculator-advanced':
-        return <FireCalculatorAdvanced />;
-      case 'budget-calculator':
-        return <BudgetCalculator />;
-      case 'mortgage-calculator':
-        return <MortgageCalculator />;
-      default:
-        return (
-          <div className="text-center py-8">
-            <p>Strumento non implementato</p>
-          </div>
-        );
-    }
-  };
+  // Instead of using a switch statement, we can directly use the component from the tool
+  const ToolComponent = tool.component;
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -63,11 +40,11 @@ const ToolPage = () => {
       
       <div className="text-center mb-8">
         <div className="text-5xl mb-4">{tool.icon}</div>
-        <h1 className="text-3xl font-bold text-fintool-teal mb-2">{tool.title}</h1>
+        <h1 className="text-3xl font-bold text-fintool-teal mb-2">{tool.name}</h1>
         <p className="text-gray-600">{tool.description}</p>
       </div>
       
-      {renderTool()}
+      <ToolComponent />
     </div>
   );
 };
