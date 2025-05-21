@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { Article } from '@/types/article';
 import { toast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import FinancialArticleLayout from '@/components/FinancialArticleLayout';
 
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -19,7 +21,7 @@ const BlogPostPage = () => {
 
   // Debug logging function
   const logDebug = useCallback((message: string, data?: any) => {
-    console.log(`[BlogPostPage FIXED] ${message}`, data || '');
+    console.log(`[BlogPostPage] ${message}`, data || '');
   }, []);
 
   // Memoize fetch function to prevent unnecessary recreation
@@ -145,18 +147,40 @@ const BlogPostPage = () => {
   // Fallback for content if post is not fully loaded or content is missing/not a string
   const articleContent = (post && typeof post.content === 'string') ? post.content : `<p>${t('article.contentNotAvailable')}</p>`;
 
+  // Determine if we should use FinancialArticleLayout based on category or other criteria
+  const isFinancialConcept = post?.category === 'finance' || post?.slug.includes('bilancio') || slug === 'comprendere-adattamento-edonico';
+
+  const BackButton = (
+    <div className="mb-8">
+      <Button 
+        variant="ghost" 
+        onClick={handleBackClick}
+        className="flex items-center gap-2"
+      >
+        <ArrowLeft size={16} />
+        <span>{t('article.backToArticles')}</span>
+      </Button>
+    </div>
+  );
+
+  if (isFinancialConcept) {
+    return (
+      <>
+        {BackButton}
+        <FinancialArticleLayout
+          title={articleTitle}
+          content={articleContent}
+          icon={post.icon || 'chart'}
+          date={formattedDate}
+          category={post.category}
+        />
+      </>
+    );
+  }
+
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="mb-8">
-        <Button 
-          variant="ghost" 
-          onClick={handleBackClick}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft size={16} />
-          <span>{t('article.backToArticles')}</span>
-        </Button>
-      </div>
+      {BackButton}
       
       <article>
         <header className="mb-8">
@@ -176,4 +200,3 @@ const BlogPostPage = () => {
 };
 
 export default React.memo(BlogPostPage);
-

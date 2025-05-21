@@ -1,34 +1,55 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Article } from '@/types/article';
-import { Loader2, RefreshCw } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { useTranslation } from 'react-i18next';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ArticleCard from '@/components/ArticleCard';
 
 const BlogPage = () => {
-  const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language;
-  
   const [posts, setPosts] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { t } = useTranslation();
 
+  // Debug logging function
   const logDebug = useCallback((message: string, data?: any) => {
-    console.log(`[BlogPage FIXED] ${message}`, data || '');
+    console.log(`[BlogPage] ${message}`, data || '');
+  }, []);
+
+  // Cache helper functions
+  const getCachedData = useCallback((key: string) => {
+    const cached = localStorage.getItem(key);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.error('Error parsing cached data:', e);
+      }
+    }
+    return null;
+  }, []);
+
+  const setCachedData = useCallback((key: string, data: any) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {
+      console.error('Error caching data:', e);
+    }
   }, []);
 
   const fetchPosts = useCallback(async () => {
     setIsLoading(true);
-    setIsRefreshing(true); // Indicate refreshing
-    logDebug('Fetching articles (without language filtering)');
+    setIsRefreshing(true);
+    logDebug('Fetching articles from Supabase');
     
     try {
+      // Primo tentativo: recupera articoli dal database
       const { data, error } = await supabase
         .from('articles')
-        .select('id, title, slug, date, excerpt, published') // Removed language field
+        .select('id, title, slug, date, excerpt, published, icon, category')
         .eq('published', true)
         .order('date', { ascending: false });
 
@@ -40,14 +61,128 @@ const BlogPage = () => {
       logDebug('Fetched articles from Supabase', data);
       
       if (data && data.length > 0) {
-        // We have articles, set them to state
+        // Abbiamo articoli, impostiamo lo stato
         setPosts(data);
-        logDebug('Set posts with all fetched articles', data);
+        // Salviamo in cache per un accesso più veloce in futuro
+        setCachedData('articles', data);
+        logDebug('Articles loaded successfully', data);
       } else {
-        // No articles found, add default ones
-        console.log("No articles found or refreshing, adding default articles...");
+        // Nessun articolo trovato, aggiungiamo quelli predefiniti
+        logDebug("No articles found, adding default articles");
         
         const defaultArticles = [
+          {
+            title: "Bilancio Personale: La Base della Salute Finanziaria",
+            slug: "bilancio-personale",
+            excerpt: "Il bilancio personale è uno strumento fondamentale che ti permette di tracciare entrate e uscite mensili. Inizia elencando tutte le fonti di reddito e categorizzando le spese.",
+            content: `<h2>Bilancio Personale: La Base della Salute Finanziaria</h2>
+<p>Il bilancio personale è uno strumento fondamentale che ti permette di tracciare entrate e uscite mensili. Inizia elencando tutte le fonti di reddito e categorizzando le spese (essenziali, discrezionali, risparmi).</p>
+
+<div class="bg-blue-50 border border-[#004D80] rounded-lg p-4 my-6">
+  <h3 class="text-[#004D80] font-bold mb-2">Concetto chiave: La regola 50/30/20</h3>
+  <p>La regola 50/30/20 suggerisce di destinare il 50% alle necessità, 30% ai desideri e 20% ai risparmi.</p>
+</div>
+
+<p>Monitora regolarmente confrontando le spese effettive con quelle pianificate. Un bilancio efficace non limita la libertà ma offre consapevolezza finanziaria, aiutandoti a identificare sprechi, pianificare obiettivi futuri e ridurre l'ansia finanziaria, aumentando il controllo sulle tue finanze.</p>
+
+<h3 class="text-xl font-bold text-[#004D80] mt-6 mb-3">Come creare il tuo bilancio personale</h3>
+
+<ol class="list-decimal pl-6 space-y-2 mb-6">
+  <li>Raccogli tutti i tuoi documenti finanziari (estratti conto, buste paga, bollette)</li>
+  <li>Identifica e somma tutte le tue fonti di reddito mensile</li>
+  <li>Elenca e categorizza tutte le tue spese mensili</li>
+  <li>Confronta entrate e uscite</li>
+  <li>Stabilisci obiettivi di risparmio realistici</li>
+  <li>Monitora e aggiusta regolarmente</li>
+</ol>
+
+<div class="bg-green-50 border border-green-500 rounded-lg p-4 my-6">
+  <h3 class="text-green-700 font-bold mb-2">Benefici di un bilancio ben strutturato:</h3>
+  <ul class="list-disc pl-5 space-y-1">
+    <li>Maggiore consapevolezza delle tue abitudini di spesa</li>
+    <li>Riduzione dello stress finanziario</li>
+    <li>Capacità di pianificare obiettivi futuri</li>
+    <li>Prevenzione dell'indebitamento eccessivo</li>
+    <li>Costruzione graduale del patrimonio personale</li>
+  </ul>
+</div>
+
+<p>Ricorda che un bilancio non è una camicia di forza ma uno strumento di libertà finanziaria. Rivedilo periodicamente e adattalo ai cambiamenti della tua vita.</p>`,
+            date: new Date().toISOString(),
+            published: true,
+            icon: "calculator",
+            category: "finance"
+          },
+          {
+            title: "Fondo di Emergenza: Il Tuo Salvagente Finanziario",
+            slug: "fondo-emergenza",
+            excerpt: "Il fondo di emergenza è una riserva finanziaria destinata a coprire spese impreviste come problemi medici, riparazioni domestiche o periodi di disoccupazione.",
+            content: `<h2>Fondo di Emergenza: Il Tuo Salvagente Finanziario</h2>
+<p>Il fondo di emergenza è una riserva finanziaria destinata a coprire spese impreviste come problemi medici, riparazioni domestiche o periodi di disoccupazione. L'obiettivo ideale è accumulare 3-6 mesi di spese essenziali.</p>
+
+<div class="bg-blue-50 border border-[#004D80] rounded-lg p-4 my-6">
+  <h3 class="text-[#004D80] font-bold mb-2">Concetto chiave: Liquidità accessibile ma separata</h3>
+  <p>Questo denaro dovrebbe essere facilmente accessibile ma separato dai conti correnti quotidiani, preferibilmente in un conto di risparmio ad alto rendimento.</p>
+</div>
+
+<p>Costruiscilo gradualmente, iniziando con un obiettivo di €1.000 e aumentando progressivamente. Un fondo di emergenza solido previene l'indebitamento in situazioni critiche e offre tranquillità psicologica, elemento essenziale per una salute finanziaria robusta.</p>
+
+<h3 class="text-xl font-bold text-[#004D80] mt-6 mb-3">Come costruire il tuo fondo di emergenza</h3>
+
+<ol class="list-decimal pl-6 space-y-2 mb-6">
+  <li>Calcola le tue spese mensili essenziali</li>
+  <li>Stabilisci un obiettivo iniziale di €1.000</li>
+  <li>Imposta trasferimenti automatici verso un conto dedicato</li>
+  <li>Aumenta gradualmente fino a raggiungere 3-6 mesi di spese</li>
+  <li>Utilizzalo solo per vere emergenze</li>
+  <li>Ricostruiscilo rapidamente quando lo utilizzi</li>
+</ol>
+
+<div class="bg-yellow-50 border border-yellow-500 rounded-lg p-4 my-6">
+  <h3 class="text-yellow-700 font-bold mb-2">Attenzione:</h3>
+  <p>Resistere alla tentazione di usare il fondo di emergenza per spese non essenziali o opportunità di investimento è fondamentale per mantenere la tua rete di sicurezza finanziaria intatta.</p>
+</div>
+
+<p>Ricorda che la tranquillità di avere un paracadute finanziario ha un valore che va oltre il semplice rendimento monetario che potresti ottenere investendo quei soldi diversamente.</p>`,
+            date: new Date().toISOString(),
+            published: true,
+            icon: "umbrella",
+            category: "finance"
+          },
+          {
+            title: "Interesse Composto: L'Ottava Meraviglia del Mondo",
+            slug: "interesse-composto",
+            excerpt: "L'interesse composto è il \"miracolo finanziario\" che genera guadagni non solo sul capitale iniziale ma anche sugli interessi precedentemente accumulati.",
+            content: `<h2>Interesse Composto: L'Ottava Meraviglia del Mondo</h2>
+<p>L'interesse composto è il "miracolo finanziario" che genera guadagni non solo sul capitale iniziale ma anche sugli interessi precedentemente accumulati. Con tempo sufficiente, anche piccoli investimenti possono trasformarsi in somme significative.</p>
+
+<div class="bg-blue-50 border border-[#004D80] rounded-lg p-4 my-6">
+  <h3 class="text-[#004D80] font-bold mb-2">Concetto chiave: La regola del 72</h3>
+  <p>La regola del 72 offre una stima rapida: dividendo 72 per il tasso di rendimento annuo, ottieni gli anni necessari per raddoppiare il capitale.</p>
+</div>
+
+<p>Questo concetto è fondamentale per investimenti a lungo termine come fondi pensione. La chiave del successo è iniziare presto: investire €200 mensili dai 25 anni può generare risultati notevolmente superiori rispetto a iniziare dieci anni dopo, anche con contributi maggiori.</p>
+
+<h3 class="text-xl font-bold text-[#004D80] mt-6 mb-3">Un esempio pratico</h3>
+
+<div class="bg-gray-50 rounded-lg p-4 my-6">
+  <p class="mb-2"><strong>Scenario A:</strong> Marco inizia a investire €200 al mese a 25 anni con un rendimento medio del 7%</p>
+  <p class="mb-2"><strong>Scenario B:</strong> Giulia inizia a investire €400 al mese a 35 anni con lo stesso rendimento del 7%</p>
+  <p class="mb-4"><strong>Risultato a 65 anni:</strong></p>
+  <ul class="list-disc pl-5 space-y-1">
+    <li>Marco avrà accumulato circa €525.000</li>
+    <li>Giulia avrà accumulato circa €465.000</li>
+  </ul>
+  <p class="mt-2">Nonostante Giulia abbia investito il doppio mensilmente, Marco ha ottenuto di più grazie al tempo aggiuntivo di crescita degli interessi.</p>
+</div>
+
+<p>L'interesse composto è uno degli strumenti più potenti per costruire ricchezza nel lungo periodo, ma richiede disciplina e pazienza per vederne i benefici completi.</p>`,
+            date: new Date().toISOString(),
+            published: true,
+            icon: "trend",
+            category: "finance"
+          },
+          // Keep the existing default articles
           {
             title: "Il Potere dei Piccoli Risparmi Regolari",
             slug: "potere-piccoli-risparmi-regolari",
@@ -301,260 +436,134 @@ const BlogPage = () => {
 
 <p>Wilson, T. D., & Gilbert, D. T. (2008). Explaining away: A model of affective adaptation. Perspectives on Psychological Science, 3(5), 370-386.</p>`,
             date: new Date().toISOString(),
-            published: true
-          },
-          {
-            title: "La Scienza della Formazione delle Abitudini: Oltre la Forza di Volontà",
-            slug: "scienza-formazione-abitudini",
-            excerpt: "Le abitudini—routine comportamentali automatiche innescate da stimoli contestuali—rappresentano circa il 43% delle nostre azioni quotidiane secondo la ricerca di Wood et al. (2002).",
-            content: `<p>Le abitudini—routine comportamentali automatiche innescate da stimoli contestuali—rappresentano circa il 43% delle nostre azioni quotidiane secondo la ricerca di Wood et al. (2002). Mentre la saggezza convenzionale enfatizza la forza di volontà e la motivazione per il cambiamento comportamentale, la ricerca moderna rivela che comprendere i meccanismi della formazione delle abitudini offre percorsi più affidabili per un cambiamento duraturo.</p>
-
-<h2>La Base Neurologica delle Abitudini</h2>
-
-<p>I meccanismi neurali alla base delle abitudini sono stati ben documentati attraverso studi di neuroimaging. La ricerca di Graybiel (2008) ha dimostrato che le abitudini sono principalmente codificate nella regione dei gangli della base del cervello, in particolare nello striato. Man mano che i comportamenti diventano abituali, il controllo si sposta dalla corteccia prefrontale (associata al processo decisionale deliberato) a queste strutture cerebrali più profonde che facilitano l'esecuzione automatica.</p>
-
-<p>Questa transizione neurologica spiega perché le abitudini consolidate richiedono un'attenzione cosciente minima e continuano nonostante le fluttuazioni nella motivazione. Come Duhigg (2012) ha riassunto dalla ricerca neuroscientifica, le abitudini creano "blocchi" neurali dove intere sequenze comportamentali vengono innescate da un singolo stimolo, operando al di sotto della consapevolezza cosciente.</p>
-
-<h2>Il Ciclo dell'Abitudine: Segnale, Routine, Ricompensa</h2>
-
-<p>La ricerca di Schultz (2016) ha identificato la struttura a tre componenti delle abitudini: segnale (innesco), routine (comportamento) e ricompensa (risultato). Questo "ciclo dell'abitudine" è stato costantemente convalidato in diversi contesti comportamentali.</p>
-
-<p>La componente di ricompensa si rivela particolarmente cruciale. La ricerca dopaminergica di Schultz et al. (1997) ha dimostrato che il rilascio di dopamina si verifica inizialmente durante la fase di ricompensa ma gradualmente si sposta alla fase di segnale man mano che le abitudini si formano. Questo spiega perché le abitudini consolidate possono persistere molto tempo dopo che le ricompense diminuiscono—l'anticipazione stessa diventa gratificante.</p>
-
-<h2>Scienza dell'Implementazione: Rendere Affidabile la Formazione delle Abitudini</h2>
-
-<p>Andando oltre la comprensione teorica, la ricerca sull'implementazione ha identificato approcci specifici che facilitano in modo affidabile la formazione delle abitudini:</p>
-
-<ul>
-<li><strong>Intenzioni di Implementazione:</strong> La meta-analisi di Gollwitzer e Sheeran (2006) sulle intenzioni di implementazione—piani specifici se-allora che collegano stimoli situazionali a azioni desiderate—ha rilevato che questo approccio aumentava i tassi di successo della formazione di abitudini del 91% rispetto alle sole intenzioni di obiettivo.</li>
-
-<li><strong>Stabilità Contestuale:</strong> Wood et al. (2005) hanno dimostrato che la coerenza ambientale ha un impatto drammatico sulla formazione delle abitudini. La loro ricerca ha mostrato che le abitudini si formano approssimativamente il 20% più velocemente in ambienti stabili e persistono il 60% più a lungo quando gli stimoli ambientali rimangono coerenti.</li>
-
-<li><strong>Sforzo Minimo Vitale:</strong> La ricerca di Fogg (2020) sulle "piccole abitudini" ha dimostrato che minimizzare lo sforzo richiesto aumenta lo sviluppo dell'automaticità. I suoi studi longitudinali hanno mostrato che i comportamenti che richiedono meno di 30 secondi per essere eseguiti hanno formato abitudini stabili in una media di 18 giorni, rispetto ai 66 giorni per comportamenti più complessi.</li>
-</ul>
-
-<h2>Il Mito della Regola dei 21 Giorni</h2>
-
-<p>Contrariamente alla credenza popolare, Lally et al. (2010) hanno scoperto che il tempo di formazione delle abitudini varia sostanzialmente in base alla complessità del comportamento e alle differenze individuali. La loro ricerca ha tracciato la formazione delle abitudini attraverso molteplici comportamenti e individui, trovando che lo sviluppo dell'automaticità variava da 18 a 254 giorni, con una mediana di 66 giorni. Questa ricerca contraddice direttamente la ampiamente citata ma non supportata "regola dei 21 giorni" per la formazione delle abitudini.</p>
-
-<p>Più significativamente, la loro ricerca ha identificato una curva matematica della formazione delle abitudini, mostrando che l'automaticità si sviluppa rapidamente durante le prime ripetizioni ma poi aumenta più lentamente fino a raggiungere un asintoto. Questo spiega perché l'iniziazione di un'abitudine spesso sembra difficile ma diventa progressivamente più facile con la ripetizione costante.</p>
-
-<h2>Applicazioni Pratiche</h2>
-
-<p>Le strategie basate sulla ricerca per la formazione delle abitudini includono:</p>
-
-<ul>
-<li><strong>Habit Stacking:</strong> Clear (2018) ha dimostrato l'efficacia di collegare nuove abitudini a routine consolidate. I suoi studi sul campo hanno mostrato che l'"habit stacking" (usare un'abitudine esistente come segnale per una nuova abitudine) aumentava la continuità del 37% rispetto all'uso di segnali arbitrari.</li>
-
-<li><strong>Accorpamento di Tentazioni:</strong> Milkman et al. (2014) hanno scoperto che accoppiare comportamenti voluti con attività immediatamente gratificanti aumentava l'aderenza del 29-34%. Il loro studio controllato con la frequenza in palestra ha mostrato che limitare gli audiolibri piacevoli alle sessioni di allenamento aumentava significativamente la frequenza dell'esercizio.</li>
-
-<li><strong>Design Ambientale:</strong> Neal et al. (2012) hanno dimostrato che la ristrutturazione ambientale—modificare gli spazi fisici per facilitare i comportamenti desiderati—aumentava i tassi di successo della formazione delle abitudini del 39-47% rispetto agli interventi incentrati sulla motivazione.</li>
-</ul>
-
-<p>Comprendere la scienza della formazione delle abitudini permette agli individui di lavorare con piuttosto che contro i meccanismi naturali del loro cervello, rendendo il cambiamento comportamentale più affidabile e sostenibile rispetto agli approcci che si basano principalmente sulla motivazione e sulla forza di volontà.</p>
-
-<h2>Riferimenti</h2>
-
-<p>Clear, J. (2018). Atomic habits: An easy & proven way to build good habits & break bad ones. Penguin.</p>
-
-<p>Duhigg, C. (2012). The power of habit: Why we do what we do in life and business. Random House.</p>
-
-<p>Fogg, B. J. (2020). Tiny habits: The small changes that change everything. Houghton Mifflin Harcourt.</p>
-
-<p>Gollwitzer, P. M., & Sheeran, P. (2006). Implementation intentions and goal achievement: A meta‐analysis of effects and processes. Advances in Experimental Social Psychology, 38, 69-119.</p>
-
-<p>Graybiel, A. M. (2008). Habits, rituals, and the evaluative brain. Annual Review of Neuroscience, 31, 359-387.</p>
-
-<p>Lally, P., Van Jaarsveld, C. H., Potts, H. W., & Wardle, J. (2010). How are habits formed: Modelling habit formation in the real world. European Journal of Social Psychology, 40(6), 998-1009.</p>
-
-<p>Milkman, K. L., Minson, J. A., & Volpp, K. G. (2014). Holding the Hunger Games hostage at the gym: An evaluation of temptation bundling. Management Science, 60(2), 283-299.</p>
-
-<p>Neal, D. T., Wood, W., Labrecque, J. S., & Lally, P. (2012). How do habits guide behavior? Perceived and actual triggers of habits in daily life. Journal of Experimental Social Psychology, 48(2), 492-498.</p>
-
-<p>Schultz, W. (2016). Dopamine reward prediction error coding. Dialogues in Clinical Neuroscience, 18(1), 23-32.</p>
-
-<p>Schultz, W., Dayan, P., & Montague, P. R. (1997). A neural substrate of prediction and reward. Science, 275(5306), 1593-1599.</p>
-
-<p>Wood, W., Tam, L., & Witt, M. G. (2005). Changing circumstances, disrupting habits. Journal of Personality and Social Psychology, 88(6), 918-933.</p>`,
-            date: new Date().toISOString(),
-            published: true
+            published: true,
+            icon: "activity",
+            category: "psychology"
           }
         ];
         
-        console.log("Inserendo articoli predefiniti...");
+        logDebug("Tentativo di inserimento articoli predefiniti");
         
-        // Inserting default articles functionality without deleting existing ones
         try {
-          // Insert the new articles
-          for (const article of defaultArticles) {
-            const { error: insertError } = await supabase
-              .from('articles')
-              .insert([article]);
-              
-            if (insertError) {
-              console.error("Errore durante l'inserimento dell'articolo:", insertError);
-              // Continue with other articles even if one fails
-            }
-          }
-          
-          console.log("Articoli predefiniti inseriti, recuperando...");
-          
-          // Fetch again to get the newly inserted articles with their IDs
-          const { data: refreshedData, error: refreshError } = await supabase
+          // Inserisci gli articoli predefiniti nel database
+          const { data: insertedData, error: insertError } = await supabase
             .from('articles')
-            .select('*')
-            .eq('published', true)
-            .order('date', { ascending: false });
+            .insert(defaultArticles)
+            .select();
             
-          if (refreshError) {
-            console.error("Errore durante il recupero degli articoli aggiornati:", refreshError);
-            throw refreshError;
+          if (insertError) {
+            logDebug('Error inserting default articles', insertError);
+            // Se non possiamo inserire nel database, usiamo comunque gli articoli predefiniti nell'UI
+            setPosts(defaultArticles);
+            toast({
+              title: t('articles.usingDefaults'),
+              description: t('articles.usingDefaultsAfterError'),
+              variant: 'destructive',
+            });
+          } else {
+            logDebug('Default articles inserted successfully', insertedData);
+            setPosts(insertedData || defaultArticles);
+            toast({
+              title: t('articles.success'),
+              description: t('articles.defaultsLoaded', { count: insertedData?.length || defaultArticles.length }),
+            });
           }
-          
-          console.log("Articoli recuperati dopo l'inserimento:", refreshedData);
-          setPosts(refreshedData || []);
-        } catch (error: any) {
-          console.error("Errore durante la gestione degli articoli:", error);
+        } catch (e) {
+          logDebug('Exception inserting default articles', e);
+          // Fallback to using default articles in UI only
+          setPosts(defaultArticles);
           toast({
-            title: 'Errore',
-            description: error.message || 'Impossibile aggiornare gli articoli',
+            title: t('articles.usingDefaults'),
+            description: t('articles.usingDefaultsAfterError'),
             variant: 'destructive',
           });
-          
-          // If an error occurred during adding default articles, set empty posts
-          setPosts([]);
         }
       }
-    } catch (error: any) {
-      console.error("Error fetching articles:", error);
-      setPosts([]); // Set to empty array on error
+      
+      toast({
+        title: t('articles.success'),
+        description: t('articles.loaded', { count: posts.length }),
+      });
+    } catch (error) {
+      console.error("Error in fetchPosts:", error);
+      
+      // Try to load from cache if available
+      const cachedArticles = getCachedData('articles');
+      if (cachedArticles && cachedArticles.length > 0) {
+        logDebug('Loading articles from cache', cachedArticles);
+        setPosts(cachedArticles);
+      } else {
+        // If no cache, set empty array
+        setPosts([]);
+      }
+      
       toast({
         title: t('thoughtsOfWeek.error'),
-        description: error.message || t('articles.errorDesc'),
+        description: t('articles.usingDefaultsAfterError'),
         variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  }, [t, logDebug]);
+  }, [t, logDebug, setCachedData, getCachedData]);
 
+  // Initial load
   useEffect(() => {
+    // Try to load from cache first for immediate display
+    const cachedArticles = getCachedData('articles');
+    if (cachedArticles && cachedArticles.length > 0) {
+      logDebug('Initial load from cache', cachedArticles);
+      setPosts(cachedArticles);
+      setIsLoading(false);
+    }
+    
+    // Then fetch fresh data
     fetchPosts();
-  }, [fetchPosts]); // Removed language dependency
+  }, [fetchPosts, getCachedData, logDebug]);
 
-  const handleRefresh = useCallback(() => {
-    fetchPosts(); // Directly call fetchPosts
-  }, [fetchPosts]);
-
-  if (isLoading && posts.length === 0) { // Show loader only on initial load
-    return (
-      <div className="flex justify-center items-center h-[50vh]">
-        <Loader2 className="w-8 h-8 animate-spin" />
-      </div>
-    );
-  }
+  // Memoize the sorted posts to prevent unnecessary re-renders
+  const sortedPosts = useMemo(() => {
+    return [...posts].sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+  }, [posts]);
 
   return (
-    <div className="space-y-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-fintool-blue mb-4">{t('articles.title')}</h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          {t('articles.subtitle')}
-        </p>
-      </div>
-
-      <div className="flex justify-end mb-4">
+    <div className="container mx-auto py-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-fintool-blue mb-2">{t('articles.title')}</h1>
+          <p className="text-gray-600">{t('articles.subtitle')}</p>
+        </div>
         <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={handleRefresh} 
+          onClick={fetchPosts} 
           disabled={isRefreshing}
-          className="flex items-center gap-2"
+          className="mt-4 md:mt-0"
         >
-          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
           {isRefreshing ? t('articles.refreshing') : t('articles.refresh')}
         </Button>
       </div>
 
-      {posts.length === 0 && !isLoading ? ( // Show "no articles" only if not loading and posts are empty
-        <div className="text-center py-16">
-          <p className="text-xl text-gray-500 mb-6">{t('articles.noArticles')}</p>
-          <Button onClick={handleRefresh} disabled={isRefreshing}>
-             {t('articles.refresh')}
-          </Button>
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : sortedPosts.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {sortedPosts.map((post) => (
+            <ArticleCard key={post.id} article={post} />
+          ))}
         </div>
       ) : (
-          <div className="grid md:grid-cols-2 gap-6">
-          {posts.map((post) => {
-            // Ensure post and post.slug are defined before creating a link
-            if (!post || !post.slug) {
-              logDebug('Skipping rendering of an invalid post object', post);
-              return null; 
-            }
-
-            logDebug('Rendering article card', { 
-              id: post.id, 
-              slug: post.slug, 
-              title: post.title, 
-              date: post.date
-            });
-            const articleLink = `/articoli/${post.slug}`;
-            logDebug('Generated article link', { articleLink });
-
-            let displayDate = t('article.dateNotAvailable');
-            if (post.date) {
-              try {
-                const dateObj = new Date(post.date);
-                if (!isNaN(dateObj.getTime())) {
-                  displayDate = dateObj.toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'it-IT', {
-                    day: 'numeric', month: 'long', year: 'numeric'
-                  });
-                } else {
-                  logDebug('Invalid date object encountered for post', { slug: post.slug, date: post.date });
-                }
-              } catch (e) {
-                logDebug('Error parsing date for post', { slug: post.slug, date: post.date, error: e });
-              }
-            } else {
-              logDebug('Missing date for post', { slug: post.slug });
-            }
-
-            return (
-              <Card key={post.id || post.slug} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle>
-                    <Link 
-                      to={articleLink} 
-                      className="hover:text-fintool-teal transition-colors"
-                      onClick={() => logDebug('Article link clicked', { slug: post.slug, generatedLink: articleLink })}
-                    >
-                      {post.title || t('article.titleNotAvailable')}
-                    </Link>
-                  </CardTitle>
-                  <CardDescription>
-                    {displayDate}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>{post.excerpt || t('article.excerptNotAvailable')}</p>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    asChild 
-                    variant="outline"
-                    onClick={() => logDebug('Read article button clicked', { slug: post.slug, generatedLink: articleLink })}
-                  >
-                    <Link to={articleLink}>{t('articles.readArticle')}</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            );
-          })}
-          </div>
+        <div className="text-center py-16">
+          <p className="text-xl mb-4">{t('articles.noArticles')}</p>
+          <Button onClick={fetchPosts}>
+            {t('articles.loadDefault')}
+          </Button>
+        </div>
       )}
     </div>
   );
 };
 
-export default React.memo(BlogPage);
+export default BlogPage;

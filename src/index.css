@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -126,4 +127,51 @@
 
 .markdown-content img {
   @apply max-w-full h-auto my-4 rounded;
+}
+
+/* Financial concept styling */
+.financial-concept-content h1, 
+.financial-concept-content h2 {
+  @apply text-[#004D80] font-bold;
+}
+
+.financial-concept-content h1 {
+  @apply text-3xl mb-6 mt-8;
+}
+
+.financial-concept-content h2 {
+  @apply text-2xl mb-4 mt-6;
+}
+
+.financial-concept-content h3 {
+  @apply text-xl font-semibold text-[#004D80] mb-3 mt-5;
+}
+
+.financial-concept-content p {
+  @apply my-4 text-base leading-relaxed;
+}
+
+.financial-concept-content ul, 
+.financial-concept-content ol {
+  @apply my-5 ml-6 space-y-2;
+}
+
+.financial-concept-content ul {
+  @apply list-disc;
+}
+
+.financial-concept-content ol {
+  @apply list-decimal;
+}
+
+.financial-concept-content a {
+  @apply text-fintool-blue underline hover:text-fintool-blue/80;
+}
+
+.financial-concept-content blockquote {
+  @apply pl-4 border-l-4 border-[#004D80] italic my-5 py-1;
+}
+
+.financial-concept-content .concept-box {
+  @apply bg-blue-50 border border-[#004D80] rounded-lg p-4 my-6;
 }

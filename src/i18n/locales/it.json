@@ -1,3 +1,4 @@
+
 {
   "navigation": {
     "home": "Home",
@@ -17,15 +18,34 @@
     "title": "Articoli",
     "subtitle": "Approfondimenti e guide sul mondo della finanza personale",
     "refresh": "Aggiorna articoli",
+    "refreshing": "Aggiornamento...",
     "noArticles": "Nessun articolo trovato.",
     "loadDefault": "Carica articoli predefiniti",
     "loading": "Caricamento...",
-    "readArticle": "Leggi l'articolo"
+    "readArticle": "Leggi l'articolo",
+    "success": "Successo",
+    "loaded": "{{count}} articoli caricati",
+    "usingDefaults": "Utilizzo articoli predefiniti",
+    "defaultsLoaded": "{{count}} articoli predefiniti caricati",
+    "usingDefaultsAfterError": "Si è verificato un errore durante il caricamento degli articoli dal database. Utilizzo di articoli predefiniti come fallback."
   },
   "article": {
     "backToArticles": "Torna agli articoli",
     "articleNotFound": "Articolo non trovato",
-    "published": "Pubblicato il"
+    "published": "Pubblicato il",
+    "dateNotAvailable": "Data non disponibile",
+    "titleNotAvailable": "Titolo non disponibile",
+    "excerptNotAvailable": "Estratto non disponibile",
+    "contentNotAvailable": "Contenuto non disponibile",
+    "errorFetch": "Impossibile caricare l'articolo",
+    "category": "Categoria",
+    "keyTakeaways": "Concetti chiave",
+    "takeaway1": "Comprendere i principi finanziari è il primo passo verso il benessere economico",
+    "takeaway2": "Piccole azioni regolari hanno un impatto significativo nel lungo periodo",
+    "takeaway3": "La consapevolezza finanziaria porta a decisioni più equilibrate e soddisfacenti",
+    "practicalAction": "Azione pratica",
+    "actionDescription": "Dedica 15 minuti questa settimana a rivedere o iniziare ad applicare quanto appreso in questo articolo.",
+    "startNow": "Inizia ora"
   },
   "tools": {
     "title": "Strumenti",

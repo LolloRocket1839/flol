@@ -6,133 +6,78 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       articles: {
         Row: {
-          id: number
-          title: string
-          slug: string
-          excerpt: string
+          author_id: string | null
           content: string
+          created_at: string
           date: string
+          excerpt: string
+          id: string
           published: boolean
-          language?: string
+          slug: string
+          title: string
+          updated_at: string
         }
         Insert: {
-          id?: number
-          title: string
-          slug: string
-          excerpt: string
+          author_id?: string | null
           content: string
+          created_at?: string
           date?: string
+          excerpt: string
+          id?: string
           published?: boolean
-          language?: string
+          slug: string
+          title: string
+          updated_at?: string
         }
         Update: {
-          id?: number
-          title?: string
-          slug?: string
+          author_id?: string | null
+          content?: string
+          created_at?: string
+          date?: string
           excerpt?: string
-          content?: string
-          date?: string
+          id?: string
           published?: boolean
-          language?: string
-        }
-        Relationships: []
-      }
-      tools: {
-        Row: {
-          id: number
-          title: string
-          slug: string
-          description: string
-          content: string
-          date: string
-          published: boolean
-        }
-        Insert: {
-          id?: number
-          title: string
-          slug: string
-          description: string
-          content: string
-          date?: string
-          published?: boolean
-        }
-        Update: {
-          id?: number
-          title?: string
           slug?: string
-          description?: string
-          content?: string
-          date?: string
-          published?: boolean
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
-      weekly_thoughts: {
+      user_roles: {
         Row: {
-          id: number
-          title: string
-          content: string
-          date: string
           created_at: string
+          id: string
+          role: string
+          user_id: string
         }
         Insert: {
-          id?: number
-          title: string
-          content: string
-          date?: string
           created_at?: string
+          id?: string
+          role: string
+          user_id: string
         }
         Update: {
-          id?: number
-          title?: string
-          content?: string
-          date?: string
           created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
         }
         Relationships: []
-      }
-      newsletter_links: {
-        Row: {
-          id: number
-          title: string
-          url: string
-          thought_id: number
-          created_at: string
-        }
-        Insert: {
-          id?: number
-          title: string
-          url: string
-          thought_id: number
-          created_at?: string
-        }
-        Update: {
-          id?: number
-          title?: string
-          url?: string
-          thought_id?: number
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "newsletter_links_thought_id_fkey"
-            columns: ["thought_id"]
-            referencedRelation: "weekly_thoughts"
-            referencedColumns: ["id"]
-          }
-        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: { role: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

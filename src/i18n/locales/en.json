@@ -1,3 +1,4 @@
+
 {
   "navigation": {
     "home": "Home",
@@ -17,15 +18,34 @@
     "title": "Articles",
     "subtitle": "Insights and guides on personal finance",
     "refresh": "Refresh articles",
+    "refreshing": "Refreshing...",
     "noArticles": "No articles found.",
     "loadDefault": "Load default articles",
     "loading": "Loading...",
-    "readArticle": "Read article"
+    "readArticle": "Read article",
+    "success": "Success",
+    "loaded": "{{count}} articles loaded",
+    "usingDefaults": "Using default articles",
+    "defaultsLoaded": "{{count}} default articles loaded",
+    "usingDefaultsAfterError": "An error occurred while loading articles from the database. Using default articles as fallback."
   },
   "article": {
     "backToArticles": "Back to articles",
     "articleNotFound": "Article not found",
-    "published": "Published on"
+    "published": "Published on",
+    "dateNotAvailable": "Date not available",
+    "titleNotAvailable": "Title not available",
+    "excerptNotAvailable": "Excerpt not available",
+    "contentNotAvailable": "Content not available",
+    "errorFetch": "Unable to load the article",
+    "category": "Category",
+    "keyTakeaways": "Key Takeaways",
+    "takeaway1": "Understanding financial principles is the first step towards economic well-being",
+    "takeaway2": "Small regular actions have a significant long-term impact",
+    "takeaway3": "Financial awareness leads to more balanced and satisfying decisions",
+    "practicalAction": "Practical Action",
+    "actionDescription": "Dedicate 15 minutes this week to review or start applying what you've learned in this article.",
+    "startNow": "Start now"
   },
   "tools": {
     "title": "Tools",

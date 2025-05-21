@@ -1,5 +1,6 @@
+
 export interface Article {
-  id: number;
+  id: string;
   title: string;
   slug: string;
   excerpt: string;
@@ -8,5 +9,7 @@ export interface Article {
   published: boolean;
   created_at?: string;
   updated_at?: string;
-  language?: string;
+  author_id?: string | null;
+  icon?: string;
+  category?: string;
 }
